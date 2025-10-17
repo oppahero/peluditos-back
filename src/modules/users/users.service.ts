@@ -7,6 +7,7 @@ import { Injectable } from '@nestjs/common';
 import { Users } from './users.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { createHash } from 'src/common/create-hash';
 
 @Injectable()
 export class UsersService {
@@ -17,6 +18,13 @@ export class UsersService {
   private async findUserEntityById(id: number): Promise<Users | null> {
     return await this.usersRepository.findOne({
       where: { users_id: id },
+    });
+  }
+
+  async findByUsername(username: string): Promise<Users | null> {
+    return await this.usersRepository.findOne({
+      where: { username },
+      select: ['users_id', 'username', 'password'],
     });
   }
 
@@ -35,7 +43,7 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const saltRounds = 10;
-    const password = await bcrypt.hash(createUserDto.password, saltRounds);
+    const password = await createHash(createUserDto.password);
 
     const newUser = this.usersRepository.create({
       username: createUserDto.username,

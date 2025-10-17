@@ -9,10 +9,10 @@ import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
-    AnimalsModule,
-    TypeOrmModule.forRoot(configService.getTypeOrmConfig()),
     AuthModule,
     UsersModule,
+    AnimalsModule,
+    TypeOrmModule.forRoot(configService.getTypeOrmConfig()),
   ],
   controllers: [AppController],
   providers: [AppService],

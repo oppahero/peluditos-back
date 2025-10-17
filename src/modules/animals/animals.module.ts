@@ -3,10 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Animals } from './animals.entity';
 import { AnimalsService } from './animals.service';
 import { AnimalsController } from './animals.controller';
-import { AuthModule } from 'src/utilities/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Animals]), AuthModule],
+  imports: [TypeOrmModule.forFeature([Animals])],
   providers: [AnimalsService],
   controllers: [AnimalsController],
 })
