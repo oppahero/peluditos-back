@@ -1,6 +1,6 @@
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { AnimalsService } from './animals.service';
 import { AnimalDto } from './dto/animal.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { Animals } from './animals.entity';
 import express from 'express';
 import {
@@ -15,7 +15,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-// @UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 @Controller('animals')
 export class AnimalsController {
   constructor(private animalsService: AnimalsService) {}

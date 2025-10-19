@@ -11,17 +11,17 @@ import {
   Body,
   Param,
   Delete,
-  UseGuards,
   Controller,
+  UseGuards,
 } from '@nestjs/common';
 
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   //   @Req() request: express.Request  request.query
   @Get()
-  @UseGuards(JwtAuthGuard)
   findAll(): Promise<UserResponseDto[]> {
     return this.usersService.findAll();
   }
