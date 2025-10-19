@@ -4,9 +4,9 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AnimalsModule } from './modules/animals/animals.module';
 import { configService } from './config/config.service';
-import { AuthModule } from './auth/auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
-import { JwtStrategy } from './auth/auth/jwt.strategy';
+import { JwtStrategy } from './auth/jwt.strategy';
 
 @Module({
   imports: [
