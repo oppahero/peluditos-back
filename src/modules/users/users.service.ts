@@ -3,11 +3,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { plainToInstance } from 'class-transformer';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserResponseDto } from './dto/users.dto';
+import { createHash } from 'src/common/create-hash';
 import { Injectable } from '@nestjs/common';
 import { Users } from './users.entity';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
-import { createHash } from 'src/common/create-hash';
 
 @Injectable()
 export class UsersService {
@@ -30,7 +29,7 @@ export class UsersService {
 
   async findAll(): Promise<UserResponseDto[]> {
     const users: Users[] = await this.usersRepository.find();
-    return plainToInstance(UserResponseDto, users) as UserResponseDto[];
+    return plainToInstance(UserResponseDto, users);
   }
 
   async findById(id: number): Promise<UserResponseDto | null> {
@@ -38,11 +37,10 @@ export class UsersService {
 
     if (!user) return null;
 
-    return plainToInstance(UserResponseDto, user) as UserResponseDto;
+    return plainToInstance(UserResponseDto, user);
   }
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
-    const saltRounds = 10;
     const password = await createHash(createUserDto.password);
 
     const newUser = this.usersRepository.create({
@@ -53,7 +51,7 @@ export class UsersService {
 
     const savedUser = await this.usersRepository.save(newUser);
 
-    return plainToInstance(UserResponseDto, savedUser) as UserResponseDto;
+    return plainToInstance(UserResponseDto, savedUser);
   }
 
   async update(id: number, user: UpdateUserDto): Promise<UserResponseDto> {
@@ -66,7 +64,7 @@ export class UsersService {
 
     const savedUser = await this.usersRepository.save(updated);
 
-    return plainToInstance(UserResponseDto, savedUser) as UserResponseDto;
+    return plainToInstance(UserResponseDto, savedUser);
   }
 
   async delete(userId: number): Promise<any> {
