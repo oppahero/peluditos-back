@@ -6,6 +6,7 @@ import { AnimalsModule } from './modules/animals/animals.module';
 import { configService } from './config/config.service';
 import { AuthModule } from './auth/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+import { JwtStrategy } from './auth/auth/jwt.strategy';
 
 @Module({
   imports: [
@@ -15,6 +16,6 @@ import { UsersModule } from './modules/users/users.module';
     TypeOrmModule.forRoot(configService.getTypeOrmConfig()),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, JwtStrategy],
 })
 export class AppModule {}

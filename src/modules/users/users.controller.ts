@@ -1,3 +1,4 @@
+import { JwtAuthGuard } from 'src/auth/auth/guards/jwt-auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/users.dto';
@@ -10,6 +11,7 @@ import {
   Body,
   Param,
   Delete,
+  UseGuards,
   Controller,
 } from '@nestjs/common';
 
@@ -19,6 +21,7 @@ export class UsersController {
 
   //   @Req() request: express.Request  request.query
   @Get()
+  @UseGuards(JwtAuthGuard)
   findAll(): Promise<UserResponseDto[]> {
     return this.usersService.findAll();
   }
