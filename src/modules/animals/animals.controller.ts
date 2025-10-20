@@ -1,24 +1,25 @@
 import { CreateUpdateAnimalDto } from './dto/create-update-animal.dto';
+import { PaginatedAnimalsDto } from './dto/paginated-animals.fto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { AnimalResponseDto } from './dto/animal.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { AnimalResponseDto } from './dto/animals-response.dto';
 import { AnimalsService } from './animals.service';
-import { Animals } from './animals.entity';
-import express from 'express';
 import {
-  ApiBearerAuth,
   ApiBody,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
   ApiTags,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiOperation,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import {
   Get,
   Put,
-  Req,
   Body,
   Post,
   Param,
+  Query,
   Delete,
   Controller,
   UseGuards,
@@ -33,14 +34,14 @@ export class AnimalsController {
 
   /**
    *
-   * @returns {AnimalResponseDto[]} Devuelve una lista de Animales
-   * @param {Request} request Lista de parámetros para filtrar
+   * @returns {PaginatedAnimalsDto} Devuelve una lista de Animales según parámetros de paginación
+   * @param {PaginationDto} paginationDto Lista de parámetros para filtrar
    */
   @Get()
   @ApiOperation({ summary: 'Obtener lista de Animales' })
   @ApiResponse({
     status: 200,
-    type: AnimalResponseDto,
+    type: PaginatedAnimalsDto,
     isArray: true,
     example: [
       {
@@ -49,8 +50,10 @@ export class AnimalsController {
       },
     ],
   })
-  findAll(@Req() request: express.Request): Promise<AnimalResponseDto[]> {
-    return this.animalsService.findAll(request.query);
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  findAll(@Query() paginationDto: PaginationDto): Promise<PaginatedAnimalsDto> {
+    return this.animalsService.findAll(paginationDto);
   }
 
   /**
@@ -91,7 +94,7 @@ export class AnimalsController {
   @ApiBody({ type: CreateUpdateAnimalDto })
   @ApiResponse({
     status: 200,
-    type: Animals,
+    type: AnimalResponseDto,
     example: {
       animals_id: 1,
       type: 'Perro',
@@ -103,6 +106,11 @@ export class AnimalsController {
     return this.animalsService.create(newAnimal);
   }
 
+  /**
+   *
+   * @returns {AnimalResponseDto} Devuelve Animal modificado
+   * @param {CreateUpdateAnimalDto} newAnimal Animal a modificar
+   */
   @Put(':animalId')
   @ApiOperation({ summary: 'Modificar animal' })
   @ApiParam({
@@ -115,7 +123,7 @@ export class AnimalsController {
   @ApiBody({ type: CreateUpdateAnimalDto })
   @ApiResponse({
     status: 200,
-    type: Animals,
+    type: AnimalResponseDto,
     example: {
       animals_id: 1,
       type: 'Perro',
@@ -128,6 +136,11 @@ export class AnimalsController {
     return this.animalsService.update(animalId, newAnimal);
   }
 
+  /**
+   *
+   * @returns {AnimalResponseDto}
+   * @param {number} animalId Id del Animal a eliminar
+   */
   @Delete(':animalId')
   @ApiOperation({ summary: 'Eliminar animal' })
   @ApiParam({

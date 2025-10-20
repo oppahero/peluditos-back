@@ -1,9 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
-import { AnimalResponseDto } from './dto/animal.dto';
+import { AnimalResponseDto } from './dto/animals-response.dto';
 import { Animals } from './animals.entity';
 import { Repository } from 'typeorm';
 import { CreateUpdateAnimalDto } from './dto/create-update-animal.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { PaginatedAnimalsDto } from './dto/paginated-animals.fto';
 
 @Injectable()
 export class AnimalsService {
@@ -11,8 +13,23 @@ export class AnimalsService {
     @InjectRepository(Animals) private animalsRepository: Repository<Animals>,
   ) {}
 
-  async findAll(params: any): Promise<AnimalResponseDto[]> {
-    return await this.animalsRepository.find();
+  async findAll({
+    page = 1,
+    limit = 10,
+  }: PaginationDto): Promise<PaginatedAnimalsDto> {
+    const [data, total] = await this.animalsRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { animals_id: 'ASC' }, // opcional
+    });
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      lastPage: Math.ceil(total / limit),
+    };
   }
 
   async findById(id: number): Promise<AnimalResponseDto | null> {
