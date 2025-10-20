@@ -1,4 +1,4 @@
-import { UserResponseDto } from 'src/modules/users/dto/users.dto';
+import { UserResponseDto } from 'src/modules/users/dto/users-response.dto';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { AuthService } from './auth.service';

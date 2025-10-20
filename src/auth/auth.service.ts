@@ -1,4 +1,4 @@
-import { UserResponseDto } from 'src/modules/users/dto/users.dto';
+import { UserResponseDto } from 'src/modules/users/dto/users-response.dto';
 import { UsersService } from 'src/modules/users/users.service';
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';

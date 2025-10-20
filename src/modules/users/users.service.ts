@@ -2,7 +2,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { plainToInstance } from 'class-transformer';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserResponseDto } from './dto/users.dto';
+import { UserResponseDto } from './dto/users-response.dto';
 import { createHash } from 'src/common/create-hash';
 import { Injectable } from '@nestjs/common';
 import { Users } from './users.entity';
