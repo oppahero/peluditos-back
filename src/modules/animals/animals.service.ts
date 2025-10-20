@@ -5,7 +5,7 @@ import { Animals } from './animals.entity';
 import { Repository } from 'typeorm';
 import { CreateUpdateAnimalDto } from './dto/create-update-animal.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { PaginatedAnimalsDto } from './dto/paginated-animals.fto';
+import { PaginatedAnimalsDto } from './dto/paginated-animals.dto';
 
 @Injectable()
 export class AnimalsService {
@@ -20,7 +20,7 @@ export class AnimalsService {
     const [data, total] = await this.animalsRepository.findAndCount({
       skip: (page - 1) * limit,
       take: limit,
-      order: { animals_id: 'ASC' }, // opcional
+      order: { animals_id: 'ASC' },
     });
 
     return {

@@ -1,5 +1,5 @@
 import { CreateUpdateAnimalDto } from './dto/create-update-animal.dto';
-import { PaginatedAnimalsDto } from './dto/paginated-animals.fto';
+import { PaginatedAnimalsDto } from './dto/paginated-animals.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { AnimalResponseDto } from './dto/animals-response.dto';

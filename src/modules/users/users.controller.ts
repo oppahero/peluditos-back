@@ -9,6 +9,7 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -21,7 +22,10 @@ import {
   Delete,
   Controller,
   UseGuards,
+  Query,
 } from '@nestjs/common';
+import { PaginatedUsersDto } from './dto/paginated-users.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -32,14 +36,14 @@ export class UsersController {
 
   /**
    *
-   * @returns {UserResponseDto[]} Devuelve una lista de Usuarios
+   * @returns {PaginatedUsersDto} Devuelve una lista de Usuarios
    * @param {Request} request Lista de parámetros para filtrar
    */
   @Get()
   @ApiOperation({ summary: 'Obtener lista de Usuarios' })
   @ApiResponse({
     status: 200,
-    type: UserResponseDto,
+    type: PaginatedUsersDto,
     isArray: true,
     example: [
       {
@@ -49,8 +53,10 @@ export class UsersController {
       },
     ],
   })
-  findAll(): Promise<UserResponseDto[]> {
-    return this.usersService.findAll();
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  findAll(@Query() paginationDto: PaginationDto): Promise<PaginatedUsersDto> {
+    return this.usersService.findAll(paginationDto);
   }
 
   /**

@@ -1,9 +1,11 @@
+import { PaginatedUsersDto } from './dto/paginated-users.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { UserResponseDto } from './dto/users-response.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { plainToInstance } from 'class-transformer';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UserResponseDto } from './dto/users-response.dto';
 import { createHash } from 'src/common/create-hash';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Users } from './users.entity';
 import { Repository } from 'typeorm';
@@ -27,9 +29,23 @@ export class UsersService {
     });
   }
 
-  async findAll(): Promise<UserResponseDto[]> {
-    const users: Users[] = await this.usersRepository.find();
-    return plainToInstance(UserResponseDto, users);
+  async findAll({
+    page = 1,
+    limit = 10,
+  }: PaginationDto): Promise<PaginatedUsersDto> {
+    const [data, total] = await this.usersRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { users_id: 'ASC' },
+    });
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      lastPage: Math.ceil(total / limit),
+    };
   }
 
   async findById(id: number): Promise<UserResponseDto | null> {
