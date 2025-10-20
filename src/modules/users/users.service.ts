@@ -57,12 +57,14 @@ export class UsersService {
   async update(id: number, user: UpdateUserDto): Promise<UserResponseDto> {
     const toUpdate = await this.findUserEntityById(id);
 
-    const updated = {
+    if (!toUpdate) throw new Error('Usuario no encontrado');
+
+    if (user.password) toUpdate.password = await createHash(user.password);
+
+    const { password, ...savedUser } = await this.usersRepository.save({
       ...toUpdate,
       ...user,
-    };
-
-    const savedUser = await this.usersRepository.save(updated);
+    });
 
     return plainToInstance(UserResponseDto, savedUser);
   }
