@@ -1,8 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
-import { AnimalDto } from './dto/animal.dto';
+import { AnimalResponseDto } from './dto/animal.dto';
 import { Animals } from './animals.entity';
 import { Repository } from 'typeorm';
+import { CreateUpdateAnimalDto } from './dto/create-update-animal.dto';
 
 @Injectable()
 export class AnimalsService {
@@ -10,28 +11,30 @@ export class AnimalsService {
     @InjectRepository(Animals) private animalsRepository: Repository<Animals>,
   ) {}
 
-  async findAll(params: any): Promise<Animals[]> {
+  async findAll(params: any): Promise<AnimalResponseDto[]> {
     return await this.animalsRepository.find();
   }
 
-  async findById(id: number): Promise<Animals | null> {
+  async findById(id: number): Promise<AnimalResponseDto | null> {
     return await this.animalsRepository.findOne({
       where: { animals_id: id },
     });
   }
 
-  create(newAnimal: AnimalDto): Promise<Animals> {
+  create(newAnimal: CreateUpdateAnimalDto): Promise<AnimalResponseDto> {
     return this.animalsRepository.save(newAnimal);
   }
 
-  async update(animalId: number, newAnimal: AnimalDto): Promise<Animals> {
+  async update(
+    animalId: number,
+    newAnimal: CreateUpdateAnimalDto,
+  ): Promise<AnimalResponseDto> {
     const toUpdate = await this.findById(animalId);
-    const updated = {
+
+    return this.animalsRepository.save({
       ...toUpdate,
       ...newAnimal,
-    };
-
-    return this.animalsRepository.save(updated);
+    });
   }
 
   async delete(animalId: number): Promise<any> {
