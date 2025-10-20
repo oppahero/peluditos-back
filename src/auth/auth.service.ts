@@ -16,10 +16,10 @@ export class AuthService {
     pass: string,
   ): Promise<UserResponseDto | null> {
     const user = await this.usersService.findByUsername(username);
-
     if (!user) return null;
 
     const isMatch = await bcrypt.compare(pass, user.password);
+
     if (isMatch) {
       const { password, ...result } = user;
       return result;
