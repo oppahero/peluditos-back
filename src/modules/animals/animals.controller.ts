@@ -12,6 +12,8 @@ import {
   ApiResponse,
   ApiOperation,
   ApiBearerAuth,
+  ApiConflictResponse,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import {
   Get,
@@ -23,7 +25,12 @@ import {
   Delete,
   Controller,
   UseGuards,
+  HttpCode,
 } from '@nestjs/common';
+import {
+  ApiErrorType,
+  buildApiErrorResponse,
+} from 'src/common/enums/api-error.types';
 
 @ApiTags('Animals')
 @Controller('animals')
@@ -38,6 +45,7 @@ export class AnimalsController {
    * @param {PaginationDto} paginationDto Lista de parámetros para filtrar
    */
   @Get()
+  @HttpCode(200)
   @ApiOperation({ summary: 'Obtener lista de Animales' })
   @ApiResponse({
     status: 200,
@@ -62,6 +70,7 @@ export class AnimalsController {
    * @param {number} animalId Id del Animal
    */
   @Get(':animalId')
+  @HttpCode(200)
   @ApiOperation({ summary: 'Obtener Animal dado el id' })
   @ApiParam({
     name: 'animalId',
@@ -78,6 +87,14 @@ export class AnimalsController {
       type: 'Perro',
     },
   })
+  @ApiNotFoundResponse({
+    example: buildApiErrorResponse(
+      404,
+      '/api/v1/animals/{animalId}',
+      ApiErrorType.RESOURCE_NOT_FOUND,
+      'Animal con ID 10 no encontrado',
+    ),
+  })
   findById(
     @Param('animalId') animalId: number,
   ): Promise<AnimalResponseDto | null> {
@@ -90,6 +107,7 @@ export class AnimalsController {
    * @param {CreateUpdateAnimalDto} newAnimal Animal a crear
    */
   @Post()
+  @HttpCode(201)
   @ApiOperation({ summary: 'Registra nuevo animal' })
   @ApiBody({ type: CreateUpdateAnimalDto })
   @ApiResponse({
@@ -99,6 +117,14 @@ export class AnimalsController {
       animals_id: 1,
       type: 'Perro',
     },
+  })
+  @ApiConflictResponse({
+    example: buildApiErrorResponse(
+      409,
+      'v1/animals',
+      ApiErrorType.CONFLICT,
+      'El animal (Perro) ya existe',
+    ),
   })
   createAnimal(
     @Body() newAnimal: CreateUpdateAnimalDto,
@@ -129,6 +155,22 @@ export class AnimalsController {
       type: 'Perro',
     },
   })
+  @ApiNotFoundResponse({
+    example: buildApiErrorResponse(
+      404,
+      '/api/v1/animals/{animalId}',
+      ApiErrorType.RESOURCE_NOT_FOUND,
+      'Animal con ID 10 no encontrado',
+    ),
+  })
+  @ApiConflictResponse({
+    example: buildApiErrorResponse(
+      409,
+      'v1/animals/{animalId}',
+      ApiErrorType.CONFLICT,
+      'Ya existe un animal con ese tipo (Perro)',
+    ),
+  })
   updateAnimal(
     @Param('animalId') animalId: number,
     @Body() newAnimal: CreateUpdateAnimalDto,
@@ -142,6 +184,7 @@ export class AnimalsController {
    * @param {number} animalId Id del Animal a eliminar
    */
   @Delete(':animalId')
+  @HttpCode(204)
   @ApiOperation({ summary: 'Eliminar animal' })
   @ApiParam({
     name: 'animalId',

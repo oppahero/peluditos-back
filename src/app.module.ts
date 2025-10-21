@@ -1,13 +1,13 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AnimalsModule } from './modules/animals/animals.module';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './modules/users/users.module';
-import { ConfigModule } from '@nestjs/config';
-import { DatabaseConfigModule } from './config/database.module';
 import { DatabaseConfigService } from './config/database.service';
+import { AnimalsModule } from './modules/animals/animals.module';
+import { DatabaseConfigModule } from './config/database.module';
+import { UsersModule } from './modules/users/users.module';
+import { AppController } from './app.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
+import { AppService } from './app.service';
+import { Module } from '@nestjs/common';
 import * as Joi from 'joi';
 
 @Module({
