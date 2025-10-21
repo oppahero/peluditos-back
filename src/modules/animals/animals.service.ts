@@ -33,7 +33,7 @@ export class AnimalsService {
     });
 
     return {
-      data,
+      items: data,
       total,
       page,
       limit,

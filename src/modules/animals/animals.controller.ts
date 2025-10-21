@@ -1,3 +1,4 @@
+import { SuccessResponseDto } from 'src/common/dto/success-response.dto';
 import { CreateUpdateAnimalDto } from './dto/create-update-animal.dto';
 import { PaginatedAnimalsDto } from './dto/paginated-animals.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -41,7 +42,7 @@ export class AnimalsController {
 
   /**
    *
-   * @returns {PaginatedAnimalsDto} Devuelve una lista de Animales según parámetros de paginación
+   * @returns {SuccessResponseDto<PaginatedAnimalsDto>} Devuelve una lista de Animales según parámetros de paginación
    * @param {PaginationDto} paginationDto Lista de parámetros para filtrar
    */
   @Get()
@@ -49,24 +50,36 @@ export class AnimalsController {
   @ApiOperation({ summary: 'Obtener lista de Animales' })
   @ApiResponse({
     status: 200,
-    type: PaginatedAnimalsDto,
+    type: SuccessResponseDto<PaginatedAnimalsDto>,
     isArray: true,
-    example: [
-      {
-        animals_id: 1,
-        type: 'Perro',
+    example: {
+      success: true,
+      data: {
+        items: [
+          {
+            animals_id: 1,
+            type: 'Perro',
+          },
+        ],
+        total: 1,
+        page: 1,
+        limit: 10,
+        lastPage: 1,
       },
-    ],
+    },
   })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
-  findAll(@Query() paginationDto: PaginationDto): Promise<PaginatedAnimalsDto> {
-    return this.animalsService.findAll(paginationDto);
+  async findAll(
+    @Query() paginationDto: PaginationDto,
+  ): Promise<SuccessResponseDto<PaginatedAnimalsDto>> {
+    const res = await this.animalsService.findAll(paginationDto);
+    return new SuccessResponseDto<PaginatedAnimalsDto>({ data: res });
   }
 
   /**
    *
-   * @returns {AnimalResponseDto} Devuelve Animal dado el Id
+   * @returns {SuccessResponseDto<AnimalResponseDto>} Devuelve Animal dado el Id
    * @param {number} animalId Id del Animal
    */
   @Get(':animalId')
@@ -81,10 +94,13 @@ export class AnimalsController {
   })
   @ApiResponse({
     status: 200,
-    type: AnimalResponseDto,
+    type: SuccessResponseDto<AnimalResponseDto>,
     example: {
-      animals_id: 1,
-      type: 'Perro',
+      success: true,
+      data: {
+        animals_id: 1,
+        type: 'Perro',
+      },
     },
   })
   @ApiNotFoundResponse({
@@ -95,15 +111,16 @@ export class AnimalsController {
       'Animal con ID 10 no encontrado',
     ),
   })
-  findById(
+  async findById(
     @Param('animalId') animalId: number,
-  ): Promise<AnimalResponseDto | null> {
-    return this.animalsService.findById(animalId);
+  ): Promise<SuccessResponseDto<AnimalResponseDto>> {
+    const res = await this.animalsService.findById(animalId);
+    return new SuccessResponseDto<AnimalResponseDto>({ data: res });
   }
 
   /**
    *
-   * @returns {AnimalResponseDto} Devuelve Animal creado
+   * @returns {SuccessResponseDto<AnimalResponseDto>} Devuelve Animal creado
    * @param {CreateUpdateAnimalDto} newAnimal Animal a crear
    */
   @Post()
@@ -111,11 +128,15 @@ export class AnimalsController {
   @ApiOperation({ summary: 'Registra nuevo animal' })
   @ApiBody({ type: CreateUpdateAnimalDto })
   @ApiResponse({
-    status: 200,
-    type: AnimalResponseDto,
+    status: 201,
+    type: SuccessResponseDto<AnimalResponseDto>,
     example: {
-      animals_id: 1,
-      type: 'Perro',
+      success: true,
+      data: {
+        animals_id: 1,
+        type: 'Perro',
+      },
+      message: 'Animal creado exitosamente',
     },
   })
   @ApiConflictResponse({
@@ -126,15 +147,19 @@ export class AnimalsController {
       'El animal (Perro) ya existe',
     ),
   })
-  createAnimal(
+  async createAnimal(
     @Body() newAnimal: CreateUpdateAnimalDto,
-  ): Promise<AnimalResponseDto> {
-    return this.animalsService.create(newAnimal);
+  ): Promise<SuccessResponseDto<AnimalResponseDto>> {
+    const res = await this.animalsService.create(newAnimal);
+    return new SuccessResponseDto<AnimalResponseDto>({
+      data: res,
+      message: 'Animal creado exitosamente',
+    });
   }
 
   /**
    *
-   * @returns {AnimalResponseDto} Devuelve Animal modificado
+   * @returns {SuccessResponseDto<AnimalResponseDto>} Devuelve Animal modificado
    * @param {CreateUpdateAnimalDto} newAnimal Animal a modificar
    */
   @Put(':animalId')
@@ -149,10 +174,14 @@ export class AnimalsController {
   @ApiBody({ type: CreateUpdateAnimalDto })
   @ApiResponse({
     status: 200,
-    type: AnimalResponseDto,
+    type: SuccessResponseDto<AnimalResponseDto>,
     example: {
-      animals_id: 1,
-      type: 'Perro',
+      success: true,
+      data: {
+        animals_id: 1,
+        type: 'Perro',
+      },
+      message: 'Animal actualizado exitosamente',
     },
   })
   @ApiNotFoundResponse({
@@ -171,16 +200,20 @@ export class AnimalsController {
       'Ya existe un animal con ese tipo (Perro)',
     ),
   })
-  updateAnimal(
+  async updateAnimal(
     @Param('animalId') animalId: number,
     @Body() newAnimal: CreateUpdateAnimalDto,
-  ): Promise<AnimalResponseDto> {
-    return this.animalsService.update(animalId, newAnimal);
+  ): Promise<SuccessResponseDto<AnimalResponseDto>> {
+    const res = await this.animalsService.update(animalId, newAnimal);
+    return new SuccessResponseDto<AnimalResponseDto>({
+      data: res,
+      message: 'Animal actualizado exitosamente',
+    });
   }
 
   /**
    *
-   * @returns {AnimalResponseDto}
+   * @returns {any}
    * @param {number} animalId Id del Animal a eliminar
    */
   @Delete(':animalId')
