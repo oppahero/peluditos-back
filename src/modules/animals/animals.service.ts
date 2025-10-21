@@ -1,17 +1,26 @@
-import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { handleDatabaseError } from 'src/helpers/database-error-helper';
+import { CreateUpdateAnimalDto } from './dto/create-update-animal.dto';
+import { PaginatedAnimalsDto } from './dto/paginated-animals.dto';
 import { AnimalResponseDto } from './dto/animals-response.dto';
+import { Injectable, ConflictException } from '@nestjs/common';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Animals } from './animals.entity';
 import { Repository } from 'typeorm';
-import { CreateUpdateAnimalDto } from './dto/create-update-animal.dto';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { PaginatedAnimalsDto } from './dto/paginated-animals.dto';
+import {
+  throwIfNoEffect,
+  throwIfNotFound,
+} from 'src/helpers/throw-if-not-found.helper';
 
 @Injectable()
 export class AnimalsService {
   constructor(
     @InjectRepository(Animals) private animalsRepository: Repository<Animals>,
   ) {}
+
+  private async findByType(type: string): Promise<AnimalResponseDto | null> {
+    return await this.animalsRepository.findOne({ where: { type } });
+  }
 
   async findAll({
     page = 1,
@@ -32,14 +41,21 @@ export class AnimalsService {
     };
   }
 
-  async findById(id: number): Promise<AnimalResponseDto | null> {
-    return await this.animalsRepository.findOne({
+  async findById(id: number): Promise<AnimalResponseDto> {
+    const animal = await this.animalsRepository.findOne({
       where: { animals_id: id },
     });
+
+    return throwIfNotFound(animal, 'Animal', id);
   }
 
-  create(newAnimal: CreateUpdateAnimalDto): Promise<AnimalResponseDto> {
-    return this.animalsRepository.save(newAnimal);
+  async create(newAnimal: CreateUpdateAnimalDto): Promise<AnimalResponseDto> {
+    const existing = await this.findByType(newAnimal.type);
+
+    if (existing)
+      throw new ConflictException(`El animal (${newAnimal.type}) ya existe`);
+
+    return await this.animalsRepository.save(newAnimal);
   }
 
   async update(
@@ -48,13 +64,23 @@ export class AnimalsService {
   ): Promise<AnimalResponseDto> {
     const toUpdate = await this.findById(animalId);
 
-    return this.animalsRepository.save({
-      ...toUpdate,
-      ...newAnimal,
-    });
+    return await handleDatabaseError(
+      () =>
+        this.animalsRepository.save({
+          ...toUpdate,
+          ...newAnimal,
+        }),
+      {
+        conflictMessage: `Ya existe un animal con ese tipo (${newAnimal.type})`,
+      },
+    );
   }
 
-  async delete(animalId: number): Promise<any> {
-    return await this.animalsRepository.delete({ animals_id: animalId });
+  async delete(animalId: number): Promise<void> {
+    const result = await this.animalsRepository.delete({
+      animals_id: animalId,
+    });
+
+    throwIfNoEffect(result, 'Animal', animalId);
   }
 }
