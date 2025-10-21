@@ -40,7 +40,7 @@ export class UsersService {
     });
 
     return {
-      data,
+      items: data,
       total,
       page,
       limit,
