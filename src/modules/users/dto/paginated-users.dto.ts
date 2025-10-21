@@ -4,5 +4,5 @@ import { UserResponseDto } from './users-response.dto';
 
 export class PaginatedUsersDto extends PaginatedDto<UserResponseDto> {
   @ApiProperty({ type: [UserResponseDto] })
-  data: UserResponseDto[] = [];
+  items: UserResponseDto[] = [];
 }

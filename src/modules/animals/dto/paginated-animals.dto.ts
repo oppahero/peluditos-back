@@ -4,5 +4,5 @@ import { AnimalResponseDto } from './animals-response.dto';
 
 export class PaginatedAnimalsDto extends PaginatedDto<AnimalResponseDto> {
   @ApiProperty({ type: [AnimalResponseDto] })
-  data: AnimalResponseDto[] = [];
+  items: AnimalResponseDto[] = [];
 }

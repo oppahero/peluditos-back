@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class PaginatedDto<T> {
   @ApiProperty({ isArray: true, type: Object })
-  data: T[];
+  items: T[];
 
   @ApiProperty({ example: 50 })
   total: number;
