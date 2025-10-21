@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { AllExceptionsFilter } from './handlers/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,7 +14,10 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // 💡 Habilita el ValidationPipe globalmente
+  // Manejador global de excepciones
+  app.useGlobalFilters(new AllExceptionsFilter());
+
+  // Habilita el ValidationPipe globalmente (dto)
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // Remueve automáticamente propiedades que no estén definidas en el DTO
@@ -22,7 +26,7 @@ async function bootstrap() {
     }),
   );
 
-  // Configurar títulos de documnentación
+  // Configurar swagger
   const options = new DocumentBuilder()
     .setTitle('Peluditos REST API')
     .setDescription('API REST de Peluditos')
