@@ -7,6 +7,7 @@ export class Animals {
 
   @Column({
     length: 10,
+    unique: true,
   })
   type: string;
 }
