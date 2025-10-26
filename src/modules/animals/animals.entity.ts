@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Breeds } from '../breeds/entities/breeds.entity';
 
 @Entity()
 export class Animals {
@@ -10,4 +11,7 @@ export class Animals {
     unique: true,
   })
   type: string;
+
+  @OneToMany(() => Breeds, (breed) => breed.animal)
+  breeds: Breeds[];
 }
