@@ -1,38 +1,38 @@
+import { SuccessResponseDto } from 'src/common/dto/success-response.dto';
+import { PaginatedBreedsDto } from './dto/paginated-breeds.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { BreedResponseDto } from './dto/breed-response.dto';
+import { UpdateBreedDto } from './dto/update-breed.dto';
 import { CreateBreedDto } from './dto/create-breed.dto';
 import { BreedsService } from './breeds.service';
 import {
-  Controller,
   Get,
   Post,
   Body,
   Param,
-  UseGuards,
-  HttpCode,
   Query,
   Patch,
   Delete,
+  HttpCode,
+  UseGuards,
+  Controller,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiBody,
-  ApiConflictResponse,
-  ApiNotFoundResponse,
-  ApiOperation,
+  ApiTags,
   ApiParam,
   ApiQuery,
   ApiResponse,
-  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiConflictResponse,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { SuccessResponseDto } from 'src/common/dto/success-response.dto';
-import { PaginatedBreedsDto } from './dto/paginated-breeds.dto';
-import { BreedResponseDto } from './dto/breed-response.dto';
 import {
-  buildApiErrorResponse,
   ApiErrorType,
+  buildApiErrorResponse,
 } from 'src/common/enums/api-error.types';
-import { UpdateBreedDto } from './dto/update-breed.dto';
 
 @ApiTags('Breeds')
 @Controller('breeds')

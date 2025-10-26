@@ -57,8 +57,6 @@ export class BreedsService {
       where: { breed: newBreed.breed },
     });
 
-    console.log(existing);
-
     if (existing)
       throw new ConflictException(
         `Raza (${newBreed.breed}) ya se encuentra registrada y asociada a un animal`,
