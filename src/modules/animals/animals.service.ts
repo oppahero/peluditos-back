@@ -77,10 +77,10 @@ export class AnimalsService {
   }
 
   async delete(animalId: number): Promise<void> {
-    const result = await this.animalsRepository.delete({
+    const res = await this.animalsRepository.delete({
       animals_id: animalId,
     });
 
-    throwIfNoEffect(result, 'Animal', animalId);
+    throwIfNoEffect(res, 'Animal', animalId);
   }
 }

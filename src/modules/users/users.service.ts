@@ -6,9 +6,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { plainToInstance } from 'class-transformer';
 import { createHash } from 'src/common/create-hash';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { Users } from './users.entity';
 import { Repository } from 'typeorm';
+import {
+  throwIfNoEffect,
+  throwIfNotFound,
+} from 'src/helpers/throw-if-not-found.helper';
+import { handleDatabaseError } from 'src/helpers/database-error-helper';
 
 @Injectable()
 export class UsersService {
@@ -48,24 +53,29 @@ export class UsersService {
     };
   }
 
-  async findById(id: number): Promise<UserResponseDto | null> {
-    const user: Users | null = await this.findUserEntityById(id);
+  async findById(id: number): Promise<UserResponseDto> {
+    let user: any = await this.findUserEntityById(id);
 
-    if (!user) return null;
+    if (user) user = plainToInstance(UserResponseDto, user);
 
-    return plainToInstance(UserResponseDto, user);
+    return throwIfNotFound(user, 'Usuario', id);
   }
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
-    const password = await createHash(createUserDto.password);
+    const existing = await this.findByUsername(createUserDto.username);
 
-    const newUser = this.usersRepository.create({
+    if (existing)
+      throw new ConflictException(
+        `El usuario (${createUserDto.username}) ya existe`,
+      );
+
+    const passworHash = await createHash(createUserDto.password);
+
+    const { password, ...savedUser } = await this.usersRepository.save({
       username: createUserDto.username,
       rol: createUserDto.rol,
-      password: password,
+      password: passworHash,
     });
-
-    const savedUser = await this.usersRepository.save(newUser);
 
     return plainToInstance(UserResponseDto, savedUser);
   }
@@ -73,19 +83,28 @@ export class UsersService {
   async update(id: number, user: UpdateUserDto): Promise<UserResponseDto> {
     const toUpdate = await this.findUserEntityById(id);
 
-    if (!toUpdate) throw new Error('Usuario no encontrado');
+    if (!toUpdate) throwIfNotFound(toUpdate, 'Usuario', id);
 
-    if (user.password) toUpdate.password = await createHash(user.password);
+    if (toUpdate && user.password)
+      user.password = await createHash(user.password);
 
-    const { password, ...savedUser } = await this.usersRepository.save({
-      ...toUpdate,
-      ...user,
-    });
+    return await handleDatabaseError(
+      async () => {
+        const { password, ...savedUser } = await this.usersRepository.save({
+          ...toUpdate,
+          ...user,
+        });
 
-    return plainToInstance(UserResponseDto, savedUser);
+        return plainToInstance(UserResponseDto, savedUser);
+      },
+      {
+        conflictMessage: `Ya existe un usuario con ese username (${user.username})`,
+      },
+    );
   }
 
   async delete(userId: number): Promise<any> {
-    return await this.usersRepository.delete({ users_id: userId });
+    const res = await this.usersRepository.delete({ users_id: userId });
+    throwIfNoEffect(res, 'Usuario', userId);
   }
 }

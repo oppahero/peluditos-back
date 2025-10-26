@@ -9,6 +9,7 @@ export class Users {
 
   @Column({
     length: 10,
+    unique: true,
   })
   username: string;
 

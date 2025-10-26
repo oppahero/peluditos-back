@@ -51,7 +51,6 @@ export class AnimalsController {
   @ApiResponse({
     status: 200,
     type: SuccessResponseDto<PaginatedAnimalsDto>,
-    isArray: true,
     example: {
       success: true,
       data: {
