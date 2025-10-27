@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class TypesOfService {
   @PrimaryGeneratedColumn()
-  types_of_services_id: number;
+  types_of_service_id: number;
 
   @Column({ length: 20, type: 'varchar', unique: true })
   description: string;

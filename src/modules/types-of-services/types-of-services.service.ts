@@ -32,7 +32,7 @@ export class TypesOfServiceService {
     const [data, total] = await this.typesOfServiceRepository.findAndCount({
       skip: (page - 1) * limit,
       take: limit,
-      order: { types_of_services_id: 'ASC' },
+      order: { types_of_service_id: 'ASC' },
     });
 
     return {
@@ -46,7 +46,7 @@ export class TypesOfServiceService {
 
   async findById(id: number): Promise<TypeOfServiceResponseDto> {
     const typeOfService = await this.typesOfServiceRepository.findOne({
-      where: { types_of_services_id: id },
+      where: { types_of_service_id: id },
     });
 
     return throwIfNotFound(typeOfService, 'Tipo de Servicio', id);
@@ -83,7 +83,7 @@ export class TypesOfServiceService {
 
   async delete(typeId: number): Promise<void> {
     const res = await this.typesOfServiceRepository.delete({
-      types_of_services_id: typeId,
+      types_of_service_id: typeId,
     });
 
     throwIfNotFound(res, 'Tipo de Servicio', typeId);

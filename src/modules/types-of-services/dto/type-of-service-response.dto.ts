@@ -3,7 +3,7 @@ import { IsBoolean, IsNumber, IsString, MaxLength } from 'class-validator';
 
 export class TypeOfServiceResponseDto {
   @ApiProperty({ example: 99 })
-  readonly types_of_services_id: number;
+  readonly types_of_service_id: number;
 
   @IsString()
   @MaxLength(20)
