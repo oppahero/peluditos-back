@@ -1,6 +1,8 @@
+import { TypesOfServicesModule } from './modules/types-of-services/types-of-services.module';
 import { DatabaseConfigService } from './config/database.service';
 import { AnimalsModule } from './modules/animals/animals.module';
 import { DatabaseConfigModule } from './config/database.module';
+import { BreedsModule } from './modules/breeds/breeds.module';
 import { UsersModule } from './modules/users/users.module';
 import { AppController } from './app.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,7 +10,6 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { AppService } from './app.service';
 import { Module } from '@nestjs/common';
-import { BreedsModule } from './modules/breeds/breeds.module';
 import * as Joi from 'joi';
 
 @Module({
@@ -32,6 +33,7 @@ import * as Joi from 'joi';
         dbConfig.getTypeOrmConfig(),
     }),
     BreedsModule,
+    TypesOfServicesModule,
     // TypeOrmModule.forRoot(configService.getTypeOrmConfig()),  con dotenv
   ],
   controllers: [AppController],
