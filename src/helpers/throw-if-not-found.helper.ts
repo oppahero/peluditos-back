@@ -1,3 +1,4 @@
+import { DeleteResult, UpdateResult } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 
 export function throwIfNotFound<T>(
@@ -11,8 +12,6 @@ export function throwIfNotFound<T>(
   }
   return entity;
 }
-
-import { DeleteResult, UpdateResult } from 'typeorm';
 
 export function throwIfNoEffect(
   result: DeleteResult | UpdateResult,

@@ -265,7 +265,7 @@ export class BreedsController {
     description: 'ID del registro',
     example: 10,
   })
-  remove(@Param('breedId') breedId: number): Promise<void> {
+  delete(@Param('breedId') breedId: number): Promise<void> {
     return this.breedsService.delete(breedId);
   }
 }

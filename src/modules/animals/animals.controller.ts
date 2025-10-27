@@ -146,7 +146,7 @@ export class AnimalsController {
       'El animal (Perro) ya existe',
     ),
   })
-  async createAnimal(
+  async create(
     @Body() newAnimal: CreateUpdateAnimalDto,
   ): Promise<SuccessResponseDto<AnimalResponseDto>> {
     const res = await this.animalsService.create(newAnimal);
@@ -199,7 +199,7 @@ export class AnimalsController {
       'Ya existe un animal con ese tipo (Perro)',
     ),
   })
-  async updateAnimal(
+  async update(
     @Param('animalId') animalId: number,
     @Body() newAnimal: CreateUpdateAnimalDto,
   ): Promise<SuccessResponseDto<AnimalResponseDto>> {
@@ -225,7 +225,7 @@ export class AnimalsController {
     description: 'ID del animal',
     example: 10,
   })
-  deleteAnimal(@Param('animalId') animalId: number): Promise<any> {
+  delete(@Param('animalId') animalId: number): Promise<any> {
     return this.animalsService.delete(animalId);
   }
 }
