@@ -4,14 +4,14 @@ import { CreateNaturalPersonDto } from './dto/create-natural-person.dto';
 import { throwIfNotFound } from 'src/helpers/throw-if-not-found.helper';
 import { UpdateNaturalPersonDto } from './dto/update-natural-person.dto';
 import { handleDatabaseError } from 'src/helpers/database-error-helper';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { NaturalPersons } from './entities/natural-persons.entity';
 import { mergeDefined } from 'src/helpers/merge-defined-helper';
 import { Injectable, ConflictException } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { PersonsService } from '../persons/persons.service';
 import { plainToInstance } from 'class-transformer';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 @Injectable()
 export class NaturalPersonsService {
@@ -19,6 +19,7 @@ export class NaturalPersonsService {
     @InjectRepository(NaturalPersons)
     private naturalPersonsRepository: Repository<NaturalPersons>,
     private personsService: PersonsService,
+    @InjectDataSource() private readonly dataSource: DataSource,
   ) {}
 
   private async findBy(
@@ -60,21 +61,29 @@ export class NaturalPersonsService {
   async create(
     newPerson: CreateNaturalPersonDto,
   ): Promise<NaturalPersonResponseDto> {
-    const existing = await this.findBy('dni', newPerson.dni);
+    return await this.dataSource.transaction(async (manager) => {
+      const existing = await manager.findOne(NaturalPersons, {
+        where: { dni: newPerson.dni },
+      });
 
-    if (existing)
-      throw new ConflictException(
-        `Existe una persona registrada con ese dni (${newPerson.dni})`,
+      if (existing) {
+        throw new ConflictException(
+          `Existe una persona registrada con ese dni (${newPerson.dni})`,
+        );
+      }
+
+      const person = await this.personsService.createWithManager(
+        manager,
+        newPerson.person,
       );
 
-    const person = await this.personsService.create(newPerson.person);
+      const natural = await manager.save(NaturalPersons, {
+        ...newPerson,
+        person,
+      });
 
-    const natural = await this.naturalPersonsRepository.save({
-      ...newPerson,
-      person,
+      return plainToInstance(NaturalPersonResponseDto, natural);
     });
-
-    return plainToInstance(NaturalPersonResponseDto, natural);
   }
 
   async update(

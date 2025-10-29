@@ -10,7 +10,7 @@ import { UpdatePersonDto } from './dto/update-person.dto';
 import { plainToInstance } from 'class-transformer';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Persons } from './entities/persons.entity';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import {
   throwIfNoEffect,
   throwIfNotFound,
@@ -79,6 +79,31 @@ export class PersonsService {
       );
 
     return await this.personsRepository.save(newPerson);
+  }
+
+  async createWithManager(
+    manager: EntityManager,
+    dto: CreatePersonDto,
+  ): Promise<Persons> {
+    const repo = manager.getRepository(Persons);
+
+    const existingPhone = await repo.findOne({ where: { phone: dto.phone } });
+
+    if (existingPhone) {
+      throw new ConflictException(
+        `El número de tlf ya se encuentra registrado (${dto.phone})`,
+      );
+    }
+
+    const existingEmail = await repo.findOne({ where: { email: dto.email } });
+    if (existingEmail) {
+      throw new ConflictException(
+        `El email ya se encuentra registrado (${dto.email})`,
+      );
+    }
+
+    const person = repo.create(dto);
+    return await repo.save(person);
   }
 
   async update(
