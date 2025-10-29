@@ -65,10 +65,10 @@ export class TypesOfServiceService {
   }
 
   async update(
-    typeId: number,
+    id: number,
     newType: UpdateTypeOfServiceDto,
   ): Promise<TypeOfServiceResponseDto> {
-    const toUpdate = await this.findById(typeId);
+    const toUpdate = await this.findById(id);
 
     return await handleDatabaseError(
       async () => {
@@ -84,11 +84,11 @@ export class TypesOfServiceService {
     );
   }
 
-  async delete(typeId: number): Promise<void> {
+  async delete(id: number) {
     const res = await this.typesOfServiceRepository.delete({
-      types_of_service_id: typeId,
+      types_of_service_id: id,
     });
 
-    throwIfNotFound(res, 'Tipo de Servicio', typeId);
+    throwIfNotFound(res, 'Tipo de Servicio', id);
   }
 }

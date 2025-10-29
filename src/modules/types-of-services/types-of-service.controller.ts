@@ -123,7 +123,7 @@ export class TypesOfServicesController {
   /**
    *
    * @returns {SuccessResponseDto<TypeOfServiceResponseDto>} Devuelve servicio creado
-   * @param {CreateTypeOfServiceDto} newType raza a asociar
+   * @param {CreateTypeOfServiceDto} newType tipo de servicio a registrar
    */
   @Post()
   @ApiOperation({ summary: 'Registra tipo de servicio' })
@@ -154,7 +154,6 @@ export class TypesOfServicesController {
     @Body() newType: CreateTypeOfServiceDto,
   ): Promise<SuccessResponseDto<TypeOfServiceResponseDto>> {
     const res = await this.typesOfServiceService.create(newType);
-
     return new SuccessResponseDto<TypeOfServiceResponseDto>({
       data: res,
       message: 'Se ha registrado el tipo de servicio exitosamente',
@@ -216,8 +215,6 @@ export class TypesOfServicesController {
   }
 
   /**
-   *
-   * @returns {any}
    * @param {number} typeId Id del registro
    */
   @Delete(':typeId')
@@ -230,7 +227,7 @@ export class TypesOfServicesController {
     description: 'ID del registro',
     example: 10,
   })
-  delete(@Param('typeId') typeId: number): Promise<void> {
+  delete(@Param('typeId') typeId: number) {
     return this.typesOfServiceService.delete(typeId);
   }
 }

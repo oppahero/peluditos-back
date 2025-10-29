@@ -211,8 +211,6 @@ export class AnimalsController {
   }
 
   /**
-   *
-   * @returns {any}
    * @param {number} animalId Id del Animal a eliminar
    */
   @Delete(':animalId')
@@ -225,7 +223,7 @@ export class AnimalsController {
     description: 'ID del animal',
     example: 10,
   })
-  delete(@Param('animalId') animalId: number): Promise<any> {
+  delete(@Param('animalId') animalId: number) {
     return this.animalsService.delete(animalId);
   }
 }

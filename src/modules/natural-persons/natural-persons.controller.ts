@@ -5,6 +5,7 @@ import { SuccessResponseDto } from 'src/common/dto/success-response.dto';
 import { CreateNaturalPersonDto } from './dto/create-natural-person.dto';
 import { NaturalPersonsService } from './natural-persons.service';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import {
   Get,
   Post,
@@ -14,6 +15,7 @@ import {
   Patch,
   Delete,
   HttpCode,
+  UseGuards,
   Controller,
 } from '@nestjs/common';
 import {
@@ -25,6 +27,7 @@ import {
   ApiOperation,
   ApiConflictResponse,
   ApiNotFoundResponse,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import {
   ApiErrorType,
@@ -33,6 +36,8 @@ import {
 
 @ApiTags('Natural Persons')
 @Controller('natural-persons')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('access-token')
 export class NaturalPersonsController {
   constructor(private naturalPersonsService: NaturalPersonsService) {}
 
@@ -43,6 +48,35 @@ export class NaturalPersonsController {
    */
   @Get()
   @ApiOperation({ summary: 'Obtener lista de Personas Naturales' })
+  @ApiResponse({
+    status: 200,
+    type: SuccessResponseDto<PaginatedNaturalPersonsDto>,
+    example: {
+      success: true,
+      data: {
+        items: [
+          {
+            person_id: 3,
+            person: {
+              persons_id: 3,
+              name: 'Paola López',
+              phone: '04121939372',
+              email: 'paola@gmail.com',
+              address: 'Alta Vista',
+              taxpayer_type: 'V',
+            },
+            dni: '25040204',
+            birthdate: '1995-11-15',
+            gender: 'M',
+          },
+        ],
+        total: 1,
+        page: 1,
+        limit: 10,
+        lastPage: 1,
+      },
+    },
+  })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   async findAll(
@@ -143,7 +177,7 @@ export class NaturalPersonsController {
 
   /**
    *
-   * @returns {SuccessResponseDto<NaturalPersonResponseDto>} Devuelve Persona natural modificado
+   * @returns {SuccessResponseDto<NaturalPersonResponseDto>} Devuelve Persona natural modificada
    * @param {UpdateNaturalPersonDto} newPerson persona a modificar
    */
   @Patch(':personId')
@@ -184,8 +218,6 @@ export class NaturalPersonsController {
   }
 
   /**
-   *
-   * @returns {any}
    * @param {number} personId Id de la persona a eliminar
    */
   @Delete(':personId')

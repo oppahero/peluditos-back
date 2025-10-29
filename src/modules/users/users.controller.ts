@@ -19,7 +19,6 @@ import {
 } from '@nestjs/swagger';
 import {
   Get,
-  Put,
   Post,
   Body,
   Param,
@@ -28,6 +27,7 @@ import {
   UseGuards,
   Controller,
   HttpCode,
+  Patch,
 } from '@nestjs/common';
 import {
   ApiErrorType,
@@ -150,7 +150,7 @@ export class UsersController {
       'El usuario (user123) ya existe',
     ),
   })
-  async createUser(
+  async create(
     @Body() newUser: CreateUserDto,
   ): Promise<SuccessResponseDto<UserResponseDto>> {
     const res = await this.usersService.create(newUser);
@@ -165,7 +165,7 @@ export class UsersController {
    * @returns {SuccessResponseDto<UserResponseDto>} Devuelve Animal modificado
    * @param {UpdateUserDto} newUser usuario a modificar
    */
-  @Put(':userId')
+  @Patch(':userId')
   @ApiOperation({ summary: 'Modificar usuario' })
   @ApiParam({
     name: 'userId',
@@ -204,7 +204,7 @@ export class UsersController {
       'Ya existe un usuario con ese username (user123)',
     ),
   })
-  async updateUser(
+  async update(
     @Param('userId') userId: number,
     @Body() newUser: UpdateUserDto,
   ): Promise<SuccessResponseDto<UserResponseDto>> {
@@ -218,7 +218,7 @@ export class UsersController {
   /**
    *
    * @returns {any}
-   * @param {number} animalId Id del Animal a eliminar
+   * @param {number} userId Id del usuario a eliminar
    */
   @Delete(':userId')
   @HttpCode(204)
@@ -230,7 +230,7 @@ export class UsersController {
     description: 'ID del usuario',
     example: 10,
   })
-  deleteUser(@Param('userId') userId: number): Promise<any> {
+  delete(@Param('userId') userId: number): Promise<any> {
     return this.usersService.delete(userId);
   }
 }

@@ -82,10 +82,10 @@ export class PersonsService {
   }
 
   async update(
-    personId: number,
+    id: number,
     newPerson: UpdatePersonDto,
   ): Promise<PersonResponseDto> {
-    const toUpdate = await this.findById(personId);
+    const toUpdate = await this.findById(id);
 
     if (newPerson.phone && newPerson.phone !== toUpdate.phone) {
       await validateUniqueField<PersonResponseDto>(
@@ -123,11 +123,11 @@ export class PersonsService {
     );
   }
 
-  async delete(personId: number) {
+  async delete(id: number) {
     const res = await this.personsRepository.delete({
-      persons_id: personId,
+      persons_id: id,
     });
 
-    throwIfNoEffect(res, 'Persona', personId);
+    throwIfNoEffect(res, 'Persona', id);
   }
 }

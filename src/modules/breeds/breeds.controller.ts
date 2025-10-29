@@ -187,9 +187,9 @@ export class BreedsController {
     ),
   })
   async create(
-    @Body() createBreedDto: CreateBreedDto,
+    @Body() newBreed: CreateBreedDto,
   ): Promise<SuccessResponseDto<BreedResponseDto>> {
-    const res = await this.breedsService.create(createBreedDto);
+    const res = await this.breedsService.create(newBreed);
     return new SuccessResponseDto<BreedResponseDto>({
       data: res,
       message: 'Se ha asociado la raza exitosamente',
@@ -251,8 +251,6 @@ export class BreedsController {
   }
 
   /**
-   *
-   * @returns {any}
    * @param {number} breedId Id del registro
    */
   @Delete(':breedId')
@@ -265,7 +263,7 @@ export class BreedsController {
     description: 'ID del registro',
     example: 10,
   })
-  delete(@Param('breedId') breedId: number): Promise<void> {
+  delete(@Param('breedId') breedId: number) {
     return this.breedsService.delete(breedId);
   }
 }

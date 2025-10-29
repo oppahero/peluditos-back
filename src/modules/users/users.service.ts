@@ -61,19 +61,17 @@ export class UsersService {
     return throwIfNotFound(user, 'Usuario', id);
   }
 
-  async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
-    const existing = await this.findByUsername(createUserDto.username);
+  async create(newUser: CreateUserDto): Promise<UserResponseDto> {
+    const existing = await this.findByUsername(newUser.username);
 
     if (existing)
-      throw new ConflictException(
-        `El usuario (${createUserDto.username}) ya existe`,
-      );
+      throw new ConflictException(`El usuario (${newUser.username}) ya existe`);
 
-    const passworHash = await createHash(createUserDto.password);
+    const passworHash = await createHash(newUser.password);
 
     const { password, ...savedUser } = await this.usersRepository.save({
-      username: createUserDto.username,
-      rol: createUserDto.rol,
+      username: newUser.username,
+      rol: newUser.rol,
       password: passworHash,
     });
 
@@ -103,8 +101,8 @@ export class UsersService {
     );
   }
 
-  async delete(userId: number): Promise<any> {
-    const res = await this.usersRepository.delete({ users_id: userId });
-    throwIfNoEffect(res, 'Usuario', userId);
+  async delete(id: number) {
+    const res = await this.usersRepository.delete({ users_id: id });
+    throwIfNoEffect(res, 'Usuario', id);
   }
 }

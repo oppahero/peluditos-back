@@ -1,5 +1,5 @@
+import { Breeds } from 'src/modules/breeds/entities/breeds.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { Breeds } from '../breeds/entities/breeds.entity';
 
 @Entity()
 export class Animals {

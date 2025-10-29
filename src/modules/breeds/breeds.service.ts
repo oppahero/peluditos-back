@@ -66,10 +66,10 @@ export class BreedsService {
   }
 
   async update(
-    breedId: number,
+    id: number,
     newBreed: UpdateBreedDto,
   ): Promise<BreedResponseDto> {
-    const toUpdate = await this.findById(breedId);
+    const toUpdate = await this.findById(id);
 
     return await handleDatabaseError(
       () =>
@@ -83,11 +83,11 @@ export class BreedsService {
     );
   }
 
-  async delete(breedId: number): Promise<void> {
+  async delete(id: number) {
     const res = await this.breedsRepository.delete({
-      breeds_id: breedId,
+      breeds_id: id,
     });
 
-    throwIfNoEffect(res, 'Raza', breedId);
+    throwIfNoEffect(res, 'Raza', id);
   }
 }

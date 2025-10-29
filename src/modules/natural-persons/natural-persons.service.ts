@@ -5,17 +5,13 @@ import { throwIfNotFound } from 'src/helpers/throw-if-not-found.helper';
 import { UpdateNaturalPersonDto } from './dto/update-natural-person.dto';
 import { handleDatabaseError } from 'src/helpers/database-error-helper';
 import { NaturalPersons } from './entities/natural-persons.entity';
+import { mergeDefined } from 'src/helpers/merge-defined-helper';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { PersonsService } from '../persons/persons.service';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { plainToInstance } from 'class-transformer';
-import { DataSource, Repository } from 'typeorm';
-import {
-  ConflictException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
-import { mergeDefined } from 'src/helpers/merge-defined-helper';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class NaturalPersonsService {
@@ -23,7 +19,6 @@ export class NaturalPersonsService {
     @InjectRepository(NaturalPersons)
     private naturalPersonsRepository: Repository<NaturalPersons>,
     private personsService: PersonsService,
-    @InjectDataSource() private readonly dataSource: DataSource,
   ) {}
 
   private async findBy(
@@ -40,25 +35,20 @@ export class NaturalPersonsService {
     page = 1,
     limit = 10,
   }: PaginationDto): Promise<PaginatedNaturalPersonsDto> {
-    try {
-      const [data, total] = await this.naturalPersonsRepository.findAndCount({
-        skip: (page - 1) * limit,
-        take: limit,
-        order: { person_id: 'ASC' },
-        relations: ['person'],
-      });
+    const [data, total] = await this.naturalPersonsRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { person_id: 'ASC' },
+      relations: ['person'],
+    });
 
-      return {
-        items: data,
-        total,
-        page,
-        limit,
-        lastPage: Math.ceil(total / limit),
-      };
-    } catch (error) {
-      console.error('Error in findAll:', error);
-      throw new InternalServerErrorException('Error al obtener los datos');
-    }
+    return {
+      items: data,
+      total,
+      page,
+      limit,
+      lastPage: Math.ceil(total / limit),
+    };
   }
 
   async findById(id: number): Promise<NaturalPersonResponseDto> {
@@ -113,8 +103,8 @@ export class NaturalPersonsService {
     );
   }
 
-  async delete(personId: number): Promise<any> {
-    await this.findById(personId);
-    await this.personsService.delete(personId);
+  async delete(id: number) {
+    await this.findById(id);
+    await this.personsService.delete(id);
   }
 }

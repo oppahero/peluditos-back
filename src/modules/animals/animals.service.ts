@@ -5,7 +5,7 @@ import { AnimalResponseDto } from './dto/animals-response.dto';
 import { Injectable, ConflictException } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Animals } from './animals.entity';
+import { Animals } from './entities/animals.entity';
 import { Repository } from 'typeorm';
 import {
   throwIfNoEffect,
@@ -59,10 +59,10 @@ export class AnimalsService {
   }
 
   async update(
-    animalId: number,
+    id: number,
     newAnimal: CreateUpdateAnimalDto,
   ): Promise<AnimalResponseDto> {
-    const toUpdate = await this.findById(animalId);
+    const toUpdate = await this.findById(id);
 
     return await handleDatabaseError(
       () =>
@@ -76,11 +76,11 @@ export class AnimalsService {
     );
   }
 
-  async delete(animalId: number): Promise<void> {
+  async delete(id: number) {
     const res = await this.animalsRepository.delete({
-      animals_id: animalId,
+      animals_id: id,
     });
 
-    throwIfNoEffect(res, 'Animal', animalId);
+    throwIfNoEffect(res, 'Animal', id);
   }
 }

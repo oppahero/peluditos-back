@@ -1,4 +1,4 @@
-import { Animals } from 'src/modules/animals/animals.entity';
+import { Animals } from 'src/modules/animals/entities/animals.entity';
 import {
   Column,
   Entity,
