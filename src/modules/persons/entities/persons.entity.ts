@@ -1,7 +1,9 @@
-import { IsEmail } from 'class-validator';
 import { TypesOfTaxpayer } from 'src/common/enums/types-of-taxpayer.enum';
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { IsEmail } from 'class-validator';
+import { NaturalPersons } from 'src/modules/natural-persons/entities/natural-persons.entity';
 
+@Entity()
 export class Persons {
   @PrimaryGeneratedColumn()
   persons_id: number;
@@ -34,4 +36,7 @@ export class Persons {
     enum: TypesOfTaxpayer,
   })
   taxpayer_type: TypesOfTaxpayer;
+
+  @OneToOne(() => NaturalPersons, (natural) => natural.person)
+  naturalPerson: NaturalPersons;
 }

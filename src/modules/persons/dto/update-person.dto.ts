@@ -1,6 +1,6 @@
+import { IsOptional, IsString, MaxLength } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreatePersonDto } from './create-person.dto';
-import { IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class UpdatePersonDto extends PartialType(CreatePersonDto) {
   @IsString()
