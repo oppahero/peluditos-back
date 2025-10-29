@@ -1,19 +1,19 @@
+import { handleDatabaseError } from 'src/helpers/database-error-helper';
 import { PaginatedUsersDto } from './dto/paginated-users.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { UserResponseDto } from './dto/users-response.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { plainToInstance } from 'class-transformer';
 import { createHash } from 'src/common/create-hash';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ConflictException, Injectable } from '@nestjs/common';
 import { Users } from './users.entity';
 import { Repository } from 'typeorm';
 import {
   throwIfNoEffect,
   throwIfNotFound,
 } from 'src/helpers/throw-if-not-found.helper';
-import { handleDatabaseError } from 'src/helpers/database-error-helper';
 
 @Injectable()
 export class UsersService {

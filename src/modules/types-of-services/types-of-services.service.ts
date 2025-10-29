@@ -9,6 +9,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class TypesOfServiceService {
@@ -70,11 +71,13 @@ export class TypesOfServiceService {
     const toUpdate = await this.findById(typeId);
 
     return await handleDatabaseError(
-      () =>
-        this.typesOfServiceRepository.save({
+      async () => {
+        const saved = await this.typesOfServiceRepository.save({
           ...toUpdate,
           ...newType,
-        }),
+        });
+        return plainToInstance(TypeOfServiceResponseDto, saved);
+      },
       {
         conflictMessage: `Ya existe una servicio con esa descripción (${newType.description}) .`,
       },
