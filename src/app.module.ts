@@ -1,5 +1,7 @@
 import { TypesOfServicesModule } from './modules/types-of-services/types-of-services.module';
+import { NaturalPersonsModule } from './modules/natural-persons/natural-persons.module';
 import { DatabaseConfigService } from './config/database.service';
+import { PersonsModule } from './modules/persons/persons.module';
 import { AnimalsModule } from './modules/animals/animals.module';
 import { DatabaseConfigModule } from './config/database.module';
 import { BreedsModule } from './modules/breeds/breeds.module';
@@ -34,6 +36,8 @@ import * as Joi from 'joi';
     }),
     BreedsModule,
     TypesOfServicesModule,
+    PersonsModule,
+    NaturalPersonsModule,
     // TypeOrmModule.forRoot(configService.getTypeOrmConfig()),  con dotenv
   ],
   controllers: [AppController],
