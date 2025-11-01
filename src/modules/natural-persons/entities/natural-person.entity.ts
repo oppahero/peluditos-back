@@ -1,4 +1,4 @@
-import { Persons } from 'src/modules/persons/entities/persons.entity';
+import { Person } from 'src/modules/persons/entities/person.entity';
 import {
   Column,
   Entity,
@@ -9,14 +9,14 @@ import {
 } from 'typeorm';
 
 @Unique(['dni'])
-@Entity()
-export class NaturalPersons {
+@Entity('natural_persons')
+export class NaturalPerson {
   @PrimaryColumn()
   person_id: number;
 
-  @OneToOne(() => Persons, { nullable: false, onDelete: 'CASCADE' })
+  @OneToOne(() => Person, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'person_id' })
-  person: Persons;
+  person: Person;
 
   @Column({
     length: 9,

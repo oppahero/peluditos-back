@@ -8,7 +8,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { plainToInstance } from 'class-transformer';
 import { createHash } from 'src/common/create-hash';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Users } from './users.entity';
+import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import {
   throwIfNoEffect,
@@ -18,17 +18,17 @@ import {
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(Users) private usersRepository: Repository<Users>,
+    @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  private async findUserEntityById(id: number): Promise<Users | null> {
-    return await this.usersRepository.findOne({
+  private async findUserEntityById(id: number): Promise<User | null> {
+    return await this.userRepository.findOne({
       where: { users_id: id },
     });
   }
 
-  async findByUsername(username: string): Promise<Users | null> {
-    return await this.usersRepository.findOne({
+  async findByUsername(username: string): Promise<User | null> {
+    return await this.userRepository.findOne({
       where: { username },
       select: ['users_id', 'username', 'password'],
     });
@@ -38,7 +38,7 @@ export class UsersService {
     page = 1,
     limit = 10,
   }: PaginationDto): Promise<PaginatedUsersDto> {
-    const [data, total] = await this.usersRepository.findAndCount({
+    const [data, total] = await this.userRepository.findAndCount({
       skip: (page - 1) * limit,
       take: limit,
       order: { users_id: 'ASC' },
@@ -69,7 +69,7 @@ export class UsersService {
 
     const passworHash = await createHash(newUser.password);
 
-    const { password, ...savedUser } = await this.usersRepository.save({
+    const { password, ...savedUser } = await this.userRepository.save({
       username: newUser.username,
       rol: newUser.rol,
       password: passworHash,
@@ -88,7 +88,7 @@ export class UsersService {
 
     return await handleDatabaseError(
       async () => {
-        const { password, ...savedUser } = await this.usersRepository.save({
+        const { password, ...savedUser } = await this.userRepository.save({
           ...toUpdate,
           ...user,
         });
@@ -102,7 +102,7 @@ export class UsersService {
   }
 
   async delete(id: number) {
-    const res = await this.usersRepository.delete({ users_id: id });
+    const res = await this.userRepository.delete({ users_id: id });
     throwIfNoEffect(res, 'Usuario', id);
   }
 }

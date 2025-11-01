@@ -1,8 +1,8 @@
-import { Breeds } from 'src/modules/breeds/entities/breeds.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Breed } from 'src/modules/breeds/entities/breed.entity';
 
-@Entity()
-export class Animals {
+@Entity('animals')
+export class Animal {
   @PrimaryGeneratedColumn()
   animals_id: number;
 
@@ -12,6 +12,6 @@ export class Animals {
   })
   type: string;
 
-  @OneToMany(() => Breeds, (breed) => breed.animal)
-  breeds: Breeds[];
+  @OneToMany(() => Breed, (breed) => breed.animal)
+  breeds: Breed[];
 }

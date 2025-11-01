@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypesOfServicesController } from './types-of-service.controller';
+import { TypesOfServicesController } from './types-of-services.controller';
 import { TypesOfServiceService } from './types-of-services.service';
 
 describe('TypesOfServiceController', () => {

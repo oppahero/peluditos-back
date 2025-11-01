@@ -5,7 +5,7 @@ import { throwIfNotFound } from 'src/helpers/throw-if-not-found.helper';
 import { UpdateNaturalPersonDto } from './dto/update-natural-person.dto';
 import { handleDatabaseError } from 'src/helpers/database-error-helper';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { NaturalPersons } from './entities/natural-persons.entity';
+import { NaturalPerson } from './entities/natural-person.entity';
 import { mergeDefined } from 'src/helpers/merge-defined-helper';
 import { Injectable, ConflictException } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
@@ -16,8 +16,8 @@ import { DataSource, Repository } from 'typeorm';
 @Injectable()
 export class NaturalPersonsService {
   constructor(
-    @InjectRepository(NaturalPersons)
-    private naturalPersonsRepository: Repository<NaturalPersons>,
+    @InjectRepository(NaturalPerson)
+    private naturalPersonRepository: Repository<NaturalPerson>,
     private personsService: PersonsService,
     @InjectDataSource() private readonly dataSource: DataSource,
   ) {}
@@ -26,7 +26,7 @@ export class NaturalPersonsService {
     key: string,
     value: any,
   ): Promise<NaturalPersonResponseDto | null> {
-    return await this.naturalPersonsRepository.findOne({
+    return await this.naturalPersonRepository.findOne({
       where: { [key]: value },
       relations: ['person'],
     });
@@ -36,7 +36,7 @@ export class NaturalPersonsService {
     page = 1,
     limit = 10,
   }: PaginationDto): Promise<PaginatedNaturalPersonsDto> {
-    const [data, total] = await this.naturalPersonsRepository.findAndCount({
+    const [data, total] = await this.naturalPersonRepository.findAndCount({
       skip: (page - 1) * limit,
       take: limit,
       order: { person_id: 'ASC' },
@@ -62,7 +62,7 @@ export class NaturalPersonsService {
     newPerson: CreateNaturalPersonDto,
   ): Promise<NaturalPersonResponseDto> {
     return await this.dataSource.transaction(async (manager) => {
-      const existing = await manager.findOne(NaturalPersons, {
+      const existing = await manager.findOne(NaturalPerson, {
         where: { dni: newPerson.dni },
       });
 
@@ -77,7 +77,7 @@ export class NaturalPersonsService {
         newPerson.person,
       );
 
-      const natural = await manager.save(NaturalPersons, {
+      const natural = await manager.save(NaturalPerson, {
         ...newPerson,
         person,
       });
@@ -100,7 +100,7 @@ export class NaturalPersonsService {
 
     return await handleDatabaseError(
       async () => {
-        const savedPerson = await this.naturalPersonsRepository.save({
+        const savedPerson = await this.naturalPersonRepository.save({
           ...toUpdate,
         });
 

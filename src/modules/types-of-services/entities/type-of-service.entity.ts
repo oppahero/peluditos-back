@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity('types_of_service')
 export class TypesOfService {
   @PrimaryGeneratedColumn()
   types_of_service_id: number;

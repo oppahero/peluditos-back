@@ -1,15 +1,15 @@
 import { NaturalPersonsController } from './natural-persons.controller';
 import { NaturalPersonsService } from './natural-persons.service';
-import { NaturalPersons } from './entities/natural-persons.entity';
+import { NaturalPerson } from './entities/natural-person.entity';
 import { forwardRef, Module } from '@nestjs/common';
 import { AuthModule } from 'src/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PersonsModule } from '../persons/persons.module';
-import { Persons } from '../persons/entities/persons.entity';
+import { Person } from '../persons/entities/person.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([NaturalPersons, Persons]),
+    TypeOrmModule.forFeature([NaturalPerson, Person]),
     forwardRef(() => AuthModule),
     PersonsModule,
   ],

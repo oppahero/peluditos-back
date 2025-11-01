@@ -4,7 +4,7 @@ import { UpdateTypeOfServiceDto } from './dto/update-type-of-service.dto';
 import { CreateTypeOfServiceDto } from './dto/create-type-of-service.dto';
 import { throwIfNotFound } from 'src/helpers/throw-if-not-found.helper';
 import { handleDatabaseError } from 'src/helpers/database-error-helper';
-import { TypesOfService } from './entities/types-of-service.entity';
+import { TypesOfService } from './entities/type-of-service.entity';
 import { ConflictException, Injectable } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { InjectRepository } from '@nestjs/typeorm';

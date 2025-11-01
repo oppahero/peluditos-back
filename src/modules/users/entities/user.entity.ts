@@ -2,8 +2,8 @@ import { Exclude } from 'class-transformer';
 import { UserRoles } from 'src/common/enums/rol.enum';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
-export class Users {
+@Entity('users')
+export class User {
   @PrimaryGeneratedColumn()
   users_id: number;
 

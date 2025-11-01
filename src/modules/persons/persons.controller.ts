@@ -4,7 +4,7 @@ import { PersonResponseDto } from './dto/person-response.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { PersonsService } from './persons.service';
-import { Persons } from './entities/persons.entity';
+import { Person } from './entities/person.entity';
 import {
   Get,
   Param,
@@ -165,9 +165,9 @@ export class PersonsController {
   })
   async findByIdIncludingExtensions(
     @Param('personId') personId: number,
-  ): Promise<SuccessResponseDto<Persons>> {
+  ): Promise<SuccessResponseDto<Person>> {
     const res = await this.personsService.findByIdIncludingExtensions(personId);
-    return new SuccessResponseDto<Persons>({ data: res });
+    return new SuccessResponseDto<Person>({ data: res });
   }
 
   /**

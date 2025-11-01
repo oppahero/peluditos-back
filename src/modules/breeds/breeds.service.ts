@@ -6,7 +6,7 @@ import { BreedResponseDto } from './dto/breed-response.dto';
 import { CreateBreedDto } from './dto/create-breed.dto';
 import { UpdateBreedDto } from './dto/update-breed.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Breeds } from './entities/breeds.entity';
+import { Breed } from './entities/breed.entity';
 import { Repository } from 'typeorm';
 import {
   throwIfNoEffect,
@@ -16,14 +16,14 @@ import {
 @Injectable()
 export class BreedsService {
   constructor(
-    @InjectRepository(Breeds) private breedsRepository: Repository<Breeds>,
+    @InjectRepository(Breed) private breedRepository: Repository<Breed>,
   ) {}
 
   async findAll({
     page = 1,
     limit = 10,
   }: PaginationDto): Promise<PaginatedBreedsDto> {
-    const [data, total] = await this.breedsRepository.findAndCount({
+    const [data, total] = await this.breedRepository.findAndCount({
       skip: (page - 1) * limit,
       take: limit,
       order: { breeds_id: 'ASC' },
@@ -39,7 +39,7 @@ export class BreedsService {
   }
 
   async findById(id: number): Promise<BreedResponseDto> {
-    const breed = await this.breedsRepository.findOne({
+    const breed = await this.breedRepository.findOne({
       where: { breeds_id: id },
     });
 
@@ -47,13 +47,13 @@ export class BreedsService {
   }
 
   async findByAnimalId(animalId: number): Promise<BreedResponseDto[]> {
-    return await this.breedsRepository.find({
+    return await this.breedRepository.find({
       where: { animal: { animals_id: animalId } },
     });
   }
 
   async create(newBreed: CreateBreedDto): Promise<BreedResponseDto> {
-    const existing = await this.breedsRepository.findOne({
+    const existing = await this.breedRepository.findOne({
       where: { breed: newBreed.breed },
     });
 
@@ -62,7 +62,7 @@ export class BreedsService {
         `Raza (${newBreed.breed}) ya se encuentra registrada y asociada a un animal`,
       );
 
-    return await this.breedsRepository.save(newBreed);
+    return await this.breedRepository.save(newBreed);
   }
 
   async update(
@@ -73,7 +73,7 @@ export class BreedsService {
 
     return await handleDatabaseError(
       () =>
-        this.breedsRepository.save({
+        this.breedRepository.save({
           ...toUpdate,
           ...newBreed,
         }),
@@ -84,7 +84,7 @@ export class BreedsService {
   }
 
   async delete(id: number) {
-    const res = await this.breedsRepository.delete({
+    const res = await this.breedRepository.delete({
       breeds_id: id,
     });
 

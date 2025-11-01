@@ -5,7 +5,7 @@ import { AnimalResponseDto } from './dto/animals-response.dto';
 import { Injectable, ConflictException } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Animals } from './entities/animals.entity';
+import { Animal } from './entities/animal.entity';
 import { Repository } from 'typeorm';
 import {
   throwIfNoEffect,
@@ -15,18 +15,18 @@ import {
 @Injectable()
 export class AnimalsService {
   constructor(
-    @InjectRepository(Animals) private animalsRepository: Repository<Animals>,
+    @InjectRepository(Animal) private animalRepository: Repository<Animal>,
   ) {}
 
   private async findByType(type: string): Promise<AnimalResponseDto | null> {
-    return await this.animalsRepository.findOne({ where: { type } });
+    return await this.animalRepository.findOne({ where: { type } });
   }
 
   async findAll({
     page = 1,
     limit = 10,
   }: PaginationDto): Promise<PaginatedAnimalsDto> {
-    const [data, total] = await this.animalsRepository.findAndCount({
+    const [data, total] = await this.animalRepository.findAndCount({
       skip: (page - 1) * limit,
       take: limit,
       order: { animals_id: 'ASC' },
@@ -42,7 +42,7 @@ export class AnimalsService {
   }
 
   async findById(id: number): Promise<AnimalResponseDto> {
-    const animal = await this.animalsRepository.findOne({
+    const animal = await this.animalRepository.findOne({
       where: { animals_id: id },
     });
 
@@ -55,7 +55,7 @@ export class AnimalsService {
     if (existing)
       throw new ConflictException(`El animal (${newAnimal.type}) ya existe`);
 
-    return await this.animalsRepository.save(newAnimal);
+    return await this.animalRepository.save(newAnimal);
   }
 
   async update(
@@ -66,7 +66,7 @@ export class AnimalsService {
 
     return await handleDatabaseError(
       () =>
-        this.animalsRepository.save({
+        this.animalRepository.save({
           ...toUpdate,
           ...newAnimal,
         }),
@@ -77,7 +77,7 @@ export class AnimalsService {
   }
 
   async delete(id: number) {
-    const res = await this.animalsRepository.delete({
+    const res = await this.animalRepository.delete({
       animals_id: id,
     });
 

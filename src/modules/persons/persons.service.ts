@@ -9,7 +9,7 @@ import { CreatePersonDto } from './dto/create-person.dto';
 import { UpdatePersonDto } from './dto/update-person.dto';
 import { plainToInstance } from 'class-transformer';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Persons } from './entities/persons.entity';
+import { Person } from './entities/person.entity';
 import { EntityManager, Repository } from 'typeorm';
 import {
   throwIfNoEffect,
@@ -19,21 +19,21 @@ import {
 @Injectable()
 export class PersonsService {
   constructor(
-    @InjectRepository(Persons) private personsRepository: Repository<Persons>,
+    @InjectRepository(Person) private personRepository: Repository<Person>,
   ) {}
 
   private async findBy(
     key: string,
     value: any,
   ): Promise<PersonResponseDto | null> {
-    return await this.personsRepository.findOneBy({ [key]: value });
+    return await this.personRepository.findOneBy({ [key]: value });
   }
 
   async findAll({
     page = 1,
     limit = 10,
   }: PaginationDto): Promise<PaginatedPersonsDto> {
-    const [data, total] = await this.personsRepository.findAndCount({
+    const [data, total] = await this.personRepository.findAndCount({
       skip: (page - 1) * limit,
       take: limit,
       order: { persons_id: 'ASC' },
@@ -54,8 +54,8 @@ export class PersonsService {
     return throwIfNotFound(person, 'Persona', id);
   }
 
-  async findByIdIncludingExtensions(id: number): Promise<Persons> {
-    const person = await this.personsRepository.findOne({
+  async findByIdIncludingExtensions(id: number): Promise<Person> {
+    const person = await this.personRepository.findOne({
       relations: ['naturalPerson'],
       where: { persons_id: id },
     });
@@ -78,14 +78,14 @@ export class PersonsService {
         `El email ya se encuentra registrado (${newPerson.email})`,
       );
 
-    return await this.personsRepository.save(newPerson);
+    return await this.personRepository.save(newPerson);
   }
 
   async createWithManager(
     manager: EntityManager,
     dto: CreatePersonDto,
-  ): Promise<Persons> {
-    const repo = manager.getRepository(Persons);
+  ): Promise<Person> {
+    const repo = manager.getRepository(Person);
 
     const existingPhone = await repo.findOne({ where: { phone: dto.phone } });
 
@@ -136,7 +136,7 @@ export class PersonsService {
 
     return await handleDatabaseError(
       async () => {
-        const savedPerson = this.personsRepository.save({
+        const savedPerson = this.personRepository.save({
           ...toUpdate,
         });
 
@@ -149,7 +149,7 @@ export class PersonsService {
   }
 
   async delete(id: number) {
-    const res = await this.personsRepository.delete({
+    const res = await this.personRepository.delete({
       persons_id: id,
     });
 

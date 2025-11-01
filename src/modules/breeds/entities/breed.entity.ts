@@ -1,4 +1,4 @@
-import { Animals } from 'src/modules/animals/entities/animals.entity';
+import { Animal } from 'src/modules/animals/entities/animal.entity';
 import {
   Column,
   Entity,
@@ -10,7 +10,7 @@ import {
 
 @Entity('breeds')
 @Unique(['breed', 'animal_id'])
-export class Breeds {
+export class Breed {
   @PrimaryGeneratedColumn()
   breeds_id: number;
 
@@ -20,7 +20,7 @@ export class Breeds {
   @Column()
   animal_id: number;
 
-  @ManyToOne(() => Animals, { nullable: false, onDelete: 'CASCADE' })
+  @ManyToOne(() => Animal, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'animal_id' })
-  animal: Animals;
+  animal: Animal;
 }
