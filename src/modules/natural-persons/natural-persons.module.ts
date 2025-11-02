@@ -15,5 +15,6 @@ import { Person } from '../persons/entities/person.entity';
   ],
   controllers: [NaturalPersonsController],
   providers: [NaturalPersonsService],
+  exports: [NaturalPersonsService],
 })
 export class NaturalPersonsModule {}

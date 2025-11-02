@@ -157,6 +157,46 @@ export class PersonsService {
     );
   }
 
+  async updateWithManager(
+    manager: EntityManager,
+    id: number,
+    dto: UpdatePersonDto,
+  ): Promise<Person> {
+    const repo = manager.getRepository(Person);
+    let toUpdate = await repo.findOne({ where: { persons_id: id } });
+
+    toUpdate = throwIfNotFound(toUpdate, 'Persona', id);
+
+    if (dto.phone && dto.phone !== toUpdate?.phone) {
+      await validateUniqueField<PersonResponseDto>(
+        'phone',
+        dto.phone,
+        toUpdate.phone,
+        this.findBy.bind(this),
+        (val) => `El número de teléfono ya se encuentra registrado (${val})`,
+      );
+    }
+
+    if (dto.email && dto.email !== toUpdate?.email) {
+      await validateUniqueField<PersonResponseDto>(
+        'email',
+        dto.email,
+        toUpdate.email,
+        this.findBy.bind(this),
+        (val) => `El email ya se encuentra registrado (${val})`,
+      );
+    }
+
+    mergeDefined(toUpdate, dto);
+
+    return await handleDatabaseError(
+      async () => await manager.save(Person, toUpdate),
+      {
+        conflictMessage: `Error al actualizar la persona.`,
+      },
+    );
+  }
+
   async delete(id: number) {
     const res = await this.personRepository.delete({
       persons_id: id,

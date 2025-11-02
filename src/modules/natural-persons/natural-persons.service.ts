@@ -92,24 +92,35 @@ export class NaturalPersonsService {
   ): Promise<NaturalPersonResponseDto> {
     const { person, ...natural } = newPerson;
 
-    if (person) await this.personsService.update(id, person);
+    return await this.dataSource.transaction(async (manager) => {
+      if (person) {
+        await this.personsService.updateWithManager(manager, id, person);
+      }
 
-    const toUpdate = await this.findById(id);
+      const toUpdate = await manager.findOne(NaturalPerson, {
+        where: { person_id: id },
+        relations: ['person'],
+      });
 
-    mergeDefined(toUpdate, natural);
+      if (!toUpdate) {
+        throw new ConflictException(
+          `Persona Natural con ID ${id} no encontrado`,
+        );
+      }
 
-    return await handleDatabaseError(
-      async () => {
-        const savedPerson = await this.naturalPersonRepository.save({
-          ...toUpdate,
-        });
+      mergeDefined(toUpdate, natural);
 
-        return plainToInstance(NaturalPersonResponseDto, savedPerson);
-      },
-      {
-        conflictMessage: `Ya existe una persona con ese dni (${newPerson.dni})`,
-      },
-    );
+      const savedPerson = await handleDatabaseError(
+        async () => await manager.save(NaturalPerson, toUpdate),
+        {
+          conflictMessage: `Ya existe una persona con ese dni (${newPerson.dni})`,
+        },
+      );
+
+      return plainToInstance(NaturalPersonResponseDto, savedPerson, {
+        excludeExtraneousValues: true,
+      });
+    });
   }
 
   async delete(id: number) {

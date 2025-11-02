@@ -116,7 +116,7 @@ export class NaturalPersonsController {
   @ApiNotFoundResponse({
     example: buildApiErrorResponse(
       404,
-      '/api/v1/users/{usersId}',
+      '/api/v1/natural-persons/{personId}',
       ApiErrorType.RESOURCE_NOT_FOUND,
       'Persona Natural con ID 10 no encontrado',
     ),
@@ -150,8 +150,8 @@ export class NaturalPersonsController {
           taxpayer_type: 'V',
           persons_id: 6,
         },
-        dni: '4035328',
-        birthdate: '1965-12-04T00:00:00.000Z',
+        dni: '25040204',
+        birthdate: '1995-11-15T00:00:00.000Z',
         gender: 'F',
         person_id: 6,
       },
@@ -160,7 +160,7 @@ export class NaturalPersonsController {
   @ApiConflictResponse({
     example: buildApiErrorResponse(
       409,
-      'v1/users',
+      'v1/natural-persons',
       ApiErrorType.CONFLICT,
       'Existe una persona registrada con ese dni (25040204)',
     ),
@@ -190,6 +190,26 @@ export class NaturalPersonsController {
     example: 10,
   })
   @ApiBody({ type: UpdateNaturalPersonDto })
+  @ApiResponse({
+    status: 200,
+    type: SuccessResponseDto<NaturalPersonResponseDto>,
+    example: {
+      success: true,
+      data: {
+        person: {
+          name: 'Paola López',
+          phone: '04121939372',
+          email: 'paola@gmail.com',
+          address: 'Alta Vista',
+          taxpayer_type: 'V',
+        },
+        dni: '25040204',
+        birthdate: '1995-11-15T00:00:00.000Z',
+        gender: 'F',
+      },
+      message: 'Persona natural actualizada exitosamente',
+    },
+  })
   @ApiNotFoundResponse({
     example: buildApiErrorResponse(
       404,
