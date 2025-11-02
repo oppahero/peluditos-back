@@ -1,10 +1,12 @@
 import { SuccessResponseDto } from 'src/common/dto/success-response.dto';
 import { PaginatedPersonsDto } from './dto/paginated-persons.dto';
-import { PersonResponseDto } from './dto/person-response.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { PersonsService } from './persons.service';
-import { Person } from './entities/person.entity';
+import {
+  PersonResponseDto,
+  PersonWithRelationsResponseDto,
+} from './dto/person-response.dto';
 import {
   Get,
   Param,
@@ -120,7 +122,7 @@ export class PersonsController {
 
   /**
    *
-   * @returns {SuccessResponseDto<PersonResponseDto>} Devuelve Persona (con extensión) dado el Id
+   * @returns {SuccessResponseDto<PersonWithRelationsResponseDto>} Devuelve Persona (con extensión) dado el Id
    * @param {number} personId Id de la persona
    */
   @Get('detail/:personId')
@@ -136,21 +138,20 @@ export class PersonsController {
   })
   @ApiResponse({
     status: 200,
-    type: SuccessResponseDto<PersonResponseDto>,
+    type: SuccessResponseDto<PersonWithRelationsResponseDto>,
     example: {
       success: true,
       data: {
-        persons_id: 3,
+        persons_id: 29,
         name: 'Paola López',
         phone: '04121939372',
         email: 'paola@gmail.com',
         address: 'Alta Vista',
         taxpayer_type: 'V',
         naturalPerson: {
-          person_id: 3,
           dni: '25040204',
           birthdate: '1995-11-15',
-          gender: 'M',
+          gender: 'F',
         },
       },
     },
@@ -165,9 +166,11 @@ export class PersonsController {
   })
   async findByIdIncludingExtensions(
     @Param('personId') personId: number,
-  ): Promise<SuccessResponseDto<Person>> {
+  ): Promise<SuccessResponseDto<PersonWithRelationsResponseDto>> {
     const res = await this.personsService.findByIdIncludingExtensions(personId);
-    return new SuccessResponseDto<Person>({ data: res });
+    return new SuccessResponseDto<PersonWithRelationsResponseDto>({
+      data: res,
+    });
   }
 
   /**

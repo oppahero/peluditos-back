@@ -4,13 +4,16 @@ import { PaginatedPersonsDto } from './dto/paginated-persons.dto';
 import { mergeDefined } from 'src/helpers/merge-defined-helper';
 import { ConflictException, Injectable } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { PersonResponseDto } from './dto/person-response.dto';
 import { CreatePersonDto } from './dto/create-person.dto';
 import { UpdatePersonDto } from './dto/update-person.dto';
 import { plainToInstance } from 'class-transformer';
+import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Person } from './entities/person.entity';
-import { EntityManager, Repository } from 'typeorm';
+import {
+  PersonResponseDto,
+  PersonWithRelationsResponseDto,
+} from './dto/person-response.dto';
 import {
   throwIfNoEffect,
   throwIfNotFound,
@@ -54,13 +57,19 @@ export class PersonsService {
     return throwIfNotFound(person, 'Persona', id);
   }
 
-  async findByIdIncludingExtensions(id: number): Promise<Person> {
+  async findByIdIncludingExtensions(
+    id: number,
+  ): Promise<PersonWithRelationsResponseDto> {
     const person = await this.personRepository.findOne({
       relations: ['naturalPerson'],
       where: { persons_id: id },
     });
 
-    return throwIfNotFound(person, 'Persona', id);
+    const res = plainToInstance(PersonWithRelationsResponseDto, person, {
+      excludeExtraneousValues: true,
+    });
+
+    return throwIfNotFound(res, 'Persona', id);
   }
 
   async create(newPerson: CreatePersonDto): Promise<PersonResponseDto> {
