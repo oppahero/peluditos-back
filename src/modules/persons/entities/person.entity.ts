@@ -1,7 +1,7 @@
+import { NaturalPerson } from 'src/modules/natural-persons/entities/natural-person.entity';
 import { TypesOfTaxpayer } from 'src/common/enums/types-of-taxpayer.enum';
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { IsEmail } from 'class-validator';
-import { NaturalPerson } from 'src/modules/natural-persons/entities/natural-person.entity';
 
 @Entity('persons')
 export class Person {

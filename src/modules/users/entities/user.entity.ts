@@ -24,7 +24,7 @@ export class User {
   @Column({
     type: 'enum', // 👈 Indica a TypeORM que use el tipo ENUM de la base de datos
     enum: UserRoles, // 👈 Pasa el enum de TypeScript
-    default: UserRoles.VETERINARIO,
+    default: UserRoles.VETERINARIAN,
   })
   rol: UserRoles;
 }

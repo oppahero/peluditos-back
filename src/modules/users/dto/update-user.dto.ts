@@ -26,7 +26,7 @@ export class UpdateUserDto {
     message: 'El rol debe ser Administrador o Veterinario',
   })
   @ApiProperty({
-    example: UserRoles.VETERINARIO,
+    example: UserRoles.VETERINARIAN,
     enum: UserRoles,
     description: 'Rol del usuario',
   })

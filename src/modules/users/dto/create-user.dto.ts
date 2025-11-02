@@ -26,7 +26,7 @@ export class CreateUserDto {
   })
   @IsNotEmpty()
   @ApiProperty({
-    example: UserRoles.VETERINARIO,
+    example: UserRoles.VETERINARIAN,
     enum: UserRoles,
     description: 'Rol del usuario',
   })
