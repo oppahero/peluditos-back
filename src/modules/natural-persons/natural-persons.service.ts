@@ -11,7 +11,7 @@ import { Injectable, ConflictException } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { PersonsService } from '../persons/persons.service';
 import { plainToInstance } from 'class-transformer';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 
 @Injectable()
 export class NaturalPersonsService {
@@ -90,37 +90,40 @@ export class NaturalPersonsService {
     id: number,
     newPerson: UpdateNaturalPersonDto,
   ): Promise<NaturalPersonResponseDto> {
-    const { person, ...natural } = newPerson;
-
     return await this.dataSource.transaction(async (manager) => {
-      if (person) {
-        await this.personsService.updateWithManager(manager, id, person);
-      }
-
-      const toUpdate = await manager.findOne(NaturalPerson, {
-        where: { person_id: id },
-        relations: ['person'],
-      });
-
-      if (!toUpdate) {
-        throw new ConflictException(
-          `Persona Natural con ID ${id} no encontrado`,
-        );
-      }
-
-      mergeDefined(toUpdate, natural);
-
-      const savedPerson = await handleDatabaseError(
-        async () => await manager.save(NaturalPerson, toUpdate),
-        {
-          conflictMessage: `Ya existe una persona con ese dni (${newPerson.dni})`,
-        },
-      );
-
+      const savedPerson = this.updateWithManager(manager, id, newPerson);
       return plainToInstance(NaturalPersonResponseDto, savedPerson, {
         excludeExtraneousValues: true,
       });
     });
+  }
+
+  async updateWithManager(
+    manager: EntityManager,
+    id: number,
+    newPerson: UpdateNaturalPersonDto,
+  ): Promise<NaturalPerson> {
+    const { person, ...natural } = newPerson;
+
+    if (person)
+      await this.personsService.updateWithManager(manager, id, person);
+
+    const toUpdate = await manager.findOne(NaturalPerson, {
+      where: { person_id: id },
+      relations: ['person'],
+    });
+
+    if (!toUpdate)
+      throw new ConflictException(`Persona Natural con ID ${id} no encontrado`);
+
+    mergeDefined(toUpdate, natural);
+
+    return await handleDatabaseError(
+      async () => await manager.save(NaturalPerson, toUpdate),
+      {
+        conflictMessage: `Ya existe una persona con ese dni (${newPerson.dni})`,
+      },
+    );
   }
 
   async delete(id: number) {
