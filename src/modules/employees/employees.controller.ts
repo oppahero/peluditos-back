@@ -34,7 +34,7 @@ import {
   buildApiErrorResponse,
 } from 'src/common/enums/api-error.types';
 
-@ApiTags('Empleados')
+@ApiTags('Employees')
 @Controller('employees')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth('access-token')
