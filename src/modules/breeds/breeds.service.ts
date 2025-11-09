@@ -38,12 +38,17 @@ export class BreedsService {
     };
   }
 
-  async findById(id: number): Promise<BreedResponseDto> {
-    const breed = await this.breedRepository.findOne({
-      where: { breeds_id: id },
-    });
+  private async findBy(key: string, value: any): Promise<Breed | null> {
+    return await this.breedRepository.findOneBy({ [key]: value });
+  }
 
+  async findEntityById(id: number): Promise<Breed> {
+    const breed = await this.findBy('breeds_id', id);
     return throwIfNotFound(breed, 'Raza', id);
+  }
+
+  async findById(id: number): Promise<BreedResponseDto> {
+    return await this.findEntityById(id);
   }
 
   async findByAnimalId(animalId: number): Promise<BreedResponseDto[]> {
