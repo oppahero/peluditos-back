@@ -25,10 +25,7 @@ export class PersonsService {
     @InjectRepository(Person) private personRepository: Repository<Person>,
   ) {}
 
-  private async findBy(
-    key: string,
-    value: any,
-  ): Promise<PersonResponseDto | null> {
+  private async findBy(key: string, value: any): Promise<Person | null> {
     return await this.personRepository.findOneBy({ [key]: value });
   }
 
@@ -51,17 +48,20 @@ export class PersonsService {
     };
   }
 
-  async findById(id: number): Promise<PersonResponseDto> {
+  async findEntityById(id: number): Promise<Person> {
     const person = await this.findBy('persons_id', id);
-
     return throwIfNotFound(person, 'Persona', id);
+  }
+
+  async findById(id: number): Promise<PersonResponseDto> {
+    return await this.findEntityById(id);
   }
 
   async findByIdIncludingExtensions(
     id: number,
   ): Promise<PersonWithRelationsResponseDto> {
     const person = await this.personRepository.findOne({
-      relations: ['naturalPerson'],
+      relations: ['naturalPerson', 'legalEntity'],
       where: { persons_id: id },
     });
 
@@ -70,24 +70,6 @@ export class PersonsService {
     });
 
     return throwIfNotFound(res, 'Persona', id);
-  }
-
-  async create(newPerson: CreatePersonDto): Promise<PersonResponseDto> {
-    let existing = await this.findBy('phone', newPerson.phone);
-
-    if (existing)
-      throw new ConflictException(
-        `El número de tlf ya se encuentra registrado (${newPerson.phone})`,
-      );
-
-    existing = await this.findBy('email', newPerson.email);
-
-    if (existing)
-      throw new ConflictException(
-        `El email ya se encuentra registrado (${newPerson.email})`,
-      );
-
-    return await this.personRepository.save(newPerson);
   }
 
   async createWithManager(
@@ -113,48 +95,6 @@ export class PersonsService {
 
     const person = repo.create(dto);
     return await repo.save(person);
-  }
-
-  async update(
-    id: number,
-    newPerson: UpdatePersonDto,
-  ): Promise<PersonResponseDto> {
-    const toUpdate = await this.findById(id);
-
-    if (newPerson.phone && newPerson.phone !== toUpdate.phone) {
-      await validateUniqueField<PersonResponseDto>(
-        'phone',
-        newPerson.phone,
-        toUpdate.phone,
-        this.findBy.bind(this),
-        (val) => `El número de teléfono ya se encuentra registrado (${val})`,
-      );
-    }
-
-    if (newPerson.email && newPerson.email !== toUpdate.email) {
-      await validateUniqueField<PersonResponseDto>(
-        'email',
-        newPerson.email,
-        toUpdate.email,
-        this.findBy.bind(this),
-        (val) => `El email ya se encuentra registrado (${val})`,
-      );
-    }
-
-    mergeDefined(toUpdate, newPerson);
-
-    return await handleDatabaseError(
-      async () => {
-        const savedPerson = this.personRepository.save({
-          ...toUpdate,
-        });
-
-        return plainToInstance(PersonResponseDto, savedPerson);
-      },
-      {
-        conflictMessage: `Error al actualizar la persona.`,
-      },
-    );
   }
 
   async updateWithManager(
