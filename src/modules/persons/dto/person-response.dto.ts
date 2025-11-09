@@ -1,7 +1,7 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger';
 import { Expose, Transform, Type } from 'class-transformer';
 import { TypesOfTaxpayer } from 'src/common/enums/types-of-taxpayer.enum';
-import { EmployeeEmbeddedDto } from 'src/modules/employees/dto/employee-response.dto';
+import { LegalEntityResponseDto } from 'src/modules/legal-entities/dto/legal-entity-response.dto';
 import { NaturalPersonEmbeddedDto } from 'src/modules/natural-persons/dto/natural-person-response.dto';
 
 export class PersonResponseDto {
@@ -42,16 +42,24 @@ export class PersonWithRelationsResponseDto extends PersonResponseDto {
   @ApiProperty({ type: NaturalPersonEmbeddedDto, required: false })
   @Type(() => NaturalPersonEmbeddedDto)
   @Expose()
-  @Transform(({ value }) => (value === undefined ? undefined : value), {
-    toPlainOnly: true,
+  @Transform(({ value }) => (value == null ? undefined : value), {
+    toClassOnly: true,
   })
   naturalPerson?: NaturalPersonEmbeddedDto;
 
-  @ApiProperty({ type: EmployeeEmbeddedDto, required: false })
-  @Type(() => EmployeeEmbeddedDto)
+  // @ApiProperty({ type: EmployeeEmbeddedDto, required: false })
+  // @Type(() => EmployeeEmbeddedDto)
+  // @Expose()
+  // @Transform(({ value }) => (value == null ? undefined : value), {
+  //   toPlainOnly: true,
+  // })
+  // employee?: EmployeeEmbeddedDto;
+
+  @ApiProperty({ type: LegalEntityResponseDto, required: false })
+  @Type(() => LegalEntityResponseDto)
   @Expose()
-  @Transform(({ value }) => (value === undefined ? undefined : value), {
-    toPlainOnly: true,
+  @Transform(({ value }) => (value == null ? undefined : value), {
+    toClassOnly: true,
   })
-  employee?: EmployeeEmbeddedDto;
+  legalEntity?: LegalEntityResponseDto;
 }
