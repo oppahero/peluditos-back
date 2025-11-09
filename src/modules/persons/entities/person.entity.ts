@@ -2,6 +2,7 @@ import { NaturalPerson } from 'src/modules/natural-persons/entities/natural-pers
 import { TypesOfTaxpayer } from 'src/common/enums/types-of-taxpayer.enum';
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { IsEmail } from 'class-validator';
+import { LegalEntity } from 'src/modules/legal-entities/entities/legal-entity.entity';
 
 @Entity('persons')
 export class Person {
@@ -39,4 +40,7 @@ export class Person {
 
   @OneToOne(() => NaturalPerson, (natural) => natural.person)
   naturalPerson: NaturalPerson;
+
+  @OneToOne(() => LegalEntity, (entity) => entity.person)
+  legalEntity: LegalEntity;
 }
