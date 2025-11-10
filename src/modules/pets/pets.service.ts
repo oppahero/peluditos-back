@@ -63,10 +63,10 @@ export class PetsService {
   }
 
   async create(createPetDto: CreatePetDto) {
-    const { breedId, personId, ...petData } = createPetDto;
+    const { breed_id, person_id, ...petData } = createPetDto;
 
-    const breed = await this.breedService.findEntityById(breedId);
-    const person = await this.personsService.findEntityById(personId);
+    const breed = await this.breedService.findEntityById(breed_id);
+    const person = await this.personsService.findEntityById(person_id);
 
     const pet = this.petRepository.create({
       ...petData,

@@ -11,12 +11,12 @@ export class CreatePetDto {
   @IsInt()
   @IsNotEmpty()
   @ApiProperty({ example: 1 })
-  breedId: number;
+  breed_id: number;
 
   @IsInt()
   @IsNotEmpty()
   @ApiProperty({ example: 25 })
-  personId: number;
+  person_id: number;
 
   @IsString()
   @IsNotEmpty()
