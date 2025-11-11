@@ -21,10 +21,15 @@ export class UsersService {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  private async findUserEntityById(id: number): Promise<User | null> {
+  async findBy(key: string, value: any): Promise<User | null> {
     return await this.userRepository.findOne({
-      where: { users_id: id },
+      where: { [key]: value },
     });
+  }
+
+  async findEntityById(id: number): Promise<User> {
+    const pet = await this.findBy('users_id', id);
+    return throwIfNotFound(pet, 'Usuario', id);
   }
 
   async findByUsername(username: string): Promise<User | null> {
@@ -54,11 +59,8 @@ export class UsersService {
   }
 
   async findById(id: number): Promise<UserResponseDto> {
-    let user: any = await this.findUserEntityById(id);
-
-    if (user) user = plainToInstance(UserResponseDto, user);
-
-    return throwIfNotFound(user, 'Usuario', id);
+    const user = await this.findEntityById(id);
+    return plainToInstance(UserResponseDto, user);
   }
 
   async create(newUser: CreateUserDto): Promise<UserResponseDto> {
@@ -79,7 +81,7 @@ export class UsersService {
   }
 
   async update(id: number, user: UpdateUserDto): Promise<UserResponseDto> {
-    const toUpdate = await this.findUserEntityById(id);
+    const toUpdate = await this.findEntityById(id);
 
     if (!toUpdate) throwIfNotFound(toUpdate, 'Usuario', id);
 
