@@ -16,5 +16,6 @@ import { PersonsModule } from '../persons/persons.module';
   ],
   controllers: [PetsController],
   providers: [PetsService],
+  exports: [PetsService],
 })
 export class PetsModule {}

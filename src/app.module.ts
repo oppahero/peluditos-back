@@ -15,6 +15,7 @@ import { AppService } from './app.service';
 import { Module } from '@nestjs/common';
 import { LegalEntitiesModule } from './modules/legal-entities/legal-entities.module';
 import { PetsModule } from './modules/pets/pets.module';
+import { ServicesModule } from './modules/services/services.module';
 import * as Joi from 'joi';
 
 @Module({
@@ -44,6 +45,7 @@ import * as Joi from 'joi';
     EmployeesModule,
     LegalEntitiesModule,
     PetsModule,
+    ServicesModule,
     // TypeOrmModule.forRoot(configService.getTypeOrmConfig()),  con dotenv
   ],
   controllers: [AppController],
