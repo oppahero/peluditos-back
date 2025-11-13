@@ -17,11 +17,11 @@ export class Service {
   @CreateDateColumn()
   created_at: Date;
 
-  @Column({
+  @Column('varchar', {
     length: 30,
     nullable: true,
   })
-  observation: string | null;
+  observation?: string | null;
 
   @Column('decimal', { precision: 6, scale: 2 }) total_amount: number;
 

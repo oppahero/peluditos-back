@@ -25,7 +25,7 @@ export class CreateServiceDto {
   @IsString()
   @IsOptional()
   @MaxLength(30)
-  @ApiProperty({ example: 'Perrito ansioso' })
+  @ApiProperty({ example: 'Perrito ansioso', required: false })
   observation?: string;
 
   @IsNumber({ maxDecimalPlaces: 2 })

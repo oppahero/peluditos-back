@@ -3,7 +3,13 @@ import { ServiceResponseDto } from './dto/service-response.dto';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { ServicesService } from './services.service';
-import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   Get,
   Post,
@@ -29,7 +35,27 @@ export class ServicesController {
    */
   @Get()
   @ApiOperation({ summary: 'Obtener lista de Servicios' })
-  @Get()
+  @ApiResponse({
+    status: 200,
+    type: SuccessResponseDto<PaginatedServicesDto>,
+    example: {
+      success: true,
+      data: {
+        items: [
+          {
+            services_id: 6,
+            created_at: '2025-11-11T04:38:28.272Z',
+            observation: null,
+            total_amount: '60.50',
+          },
+        ],
+        total: 1,
+        page: 1,
+        limit: 10,
+        lastPage: 1,
+      },
+    },
+  })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   async findAll(
@@ -39,6 +65,11 @@ export class ServicesController {
     return new SuccessResponseDto({ data: res });
   }
 
+  /**
+   *
+   * @returns {SuccessResponseDto<ServiceResponseDto>} Devuelve service creado
+   * @param {CreatePetDto} newService Servicio a crear
+   */
   @Post()
   @ApiBody({ type: CreateServiceDto })
   async create(
@@ -48,18 +79,8 @@ export class ServicesController {
     return new SuccessResponseDto({ data: res });
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.servicesService.findOne(+id);
-  }
-
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
     return this.servicesService.update(+id, updateServiceDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.servicesService.remove(+id);
   }
 }

@@ -1,16 +1,16 @@
+import { PaginatedServicesDto } from './dto/paginated-services.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { ServiceResponseDto } from './dto/service-response.dto';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { UsersService } from '../users/users.service';
 import { Service } from './entities/service.entity';
+import { plainToInstance } from 'class-transformer';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PetsService } from '../pets/pets.service';
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 import { ApiTags } from '@nestjs/swagger';
-import { plainToInstance } from 'class-transformer';
-import { PaginatedServicesDto } from './dto/paginated-services.dto';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Repository } from 'typeorm';
 
 @ApiTags('Services')
 @Injectable()
@@ -22,6 +22,17 @@ export class ServicesService {
     private usersService: UsersService,
   ) {}
 
+  private async findBy(
+    key: string,
+    value: any,
+    withRelations = false,
+  ): Promise<Service | null> {
+    return await this.serviceRepository.findOne({
+      where: { [key]: value },
+      relations: withRelations ? ['pet', 'user'] : [],
+    });
+  }
+
   async findAll({
     page = 1,
     limit = 10,
@@ -30,20 +41,20 @@ export class ServicesService {
       skip: (page - 1) * limit,
       take: limit,
       order: { services_id: 'ASC' },
-      relations: ['pet', 'user'],
+      // relations: ['pet', 'user'],
+    });
+
+    const items = plainToInstance(ServiceResponseDto, data, {
+      excludeExtraneousValues: true,
     });
 
     return {
-      items: data,
+      items,
       total,
       page,
       limit,
       lastPage: Math.ceil(total / limit),
     };
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} service`;
   }
 
   async create(newService: CreateServiceDto): Promise<ServiceResponseDto> {
@@ -66,9 +77,5 @@ export class ServicesService {
 
   update(id: number, updateServiceDto: UpdateServiceDto) {
     return `This action updates a #${id} service`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} service`;
   }
 }
