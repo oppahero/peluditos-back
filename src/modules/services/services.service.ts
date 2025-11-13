@@ -9,6 +9,8 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
+import { PaginatedServicesDto } from './dto/paginated-services.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @ApiTags('Services')
 @Injectable()
@@ -20,8 +22,24 @@ export class ServicesService {
     private usersService: UsersService,
   ) {}
 
-  findAll() {
-    return `This action returns all services`;
+  async findAll({
+    page = 1,
+    limit = 10,
+  }: PaginationDto): Promise<PaginatedServicesDto> {
+    const [data, total] = await this.serviceRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { services_id: 'ASC' },
+      relations: ['pet', 'user'],
+    });
+
+    return {
+      items: data,
+      total,
+      page,
+      limit,
+      lastPage: Math.ceil(total / limit),
+    };
   }
 
   findOne(id: number) {

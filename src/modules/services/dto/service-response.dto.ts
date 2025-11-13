@@ -14,7 +14,7 @@ export class ServiceResponseDto {
 
   @ApiProperty({ example: 'Perrito con ansiedad' })
   @Expose()
-  readonly observation: string;
+  readonly observation: string | null;
 
   @ApiProperty({ example: 60 })
   @Expose()
