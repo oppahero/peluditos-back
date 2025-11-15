@@ -12,5 +12,6 @@ import { AuthModule } from 'src/auth/auth.module';
   ],
   controllers: [TypesOfServicesController],
   providers: [TypesOfServiceService],
+  exports: [TypesOfServiceService],
 })
 export class TypesOfServicesModule {}

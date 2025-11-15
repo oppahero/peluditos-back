@@ -13,7 +13,7 @@ export class UpdateTypeOfServiceDto extends PartialType(
   CreateTypeOfServiceDto,
 ) {
   @IsString()
-  @MaxLength(20)
+  @MaxLength(30)
   @IsOptional()
   @ApiProperty({ example: 'Consulta Veterinaria' })
   description?: string;

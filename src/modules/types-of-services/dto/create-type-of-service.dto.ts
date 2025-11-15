@@ -10,12 +10,12 @@ import {
 
 export class CreateTypeOfServiceDto {
   @IsString()
-  @MaxLength(20)
+  @MaxLength(30)
   @IsNotEmpty()
   @ApiProperty({ example: 'Consulta Veterinaria' })
   description: string;
 
-  @IsNumber()
+  @IsNumber({ maxDecimalPlaces: 2 })
   @Min(1)
   @IsNotEmpty()
   @ApiProperty({ example: 20 })

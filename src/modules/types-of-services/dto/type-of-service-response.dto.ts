@@ -6,7 +6,7 @@ export class TypeOfServiceResponseDto {
   readonly types_of_service_id: number;
 
   @IsString()
-  @MaxLength(20)
+  @MaxLength(30)
   @ApiProperty({ example: 'Consulta Veterinaria' })
   readonly description: string;
 

@@ -5,10 +5,10 @@ export class TypesOfService {
   @PrimaryGeneratedColumn()
   types_of_service_id: number;
 
-  @Column({ length: 20, type: 'varchar', unique: true })
+  @Column({ length: 30, type: 'varchar', unique: true })
   description: string;
 
-  @Column()
+  @Column('decimal', { precision: 6, scale: 2 })
   price: number;
 
   @Column({ nullable: true })
