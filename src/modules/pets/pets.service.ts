@@ -1,18 +1,18 @@
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { PaginatedPetsDto } from './dto/paginated-pets.dto';
+import { PersonsService } from '../persons/persons.service';
+import { BreedsService } from '../breeds/breeds.service';
+import { PetResponseDto } from './dto/pet-response.dto';
+import { CreatePetDto } from './dto/create-pet.dto';
+import { UpdatePetDto } from './dto/update-pet.dto';
+import { EntityManager, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
+import { Pet } from './entities/pet.entity';
 import {
   throwIfNoEffect,
   throwIfNotFound,
 } from 'src/helpers/throw-if-not-found.helper';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { PaginatedPetsDto } from './dto/paginated-pets.dto';
-import { PetResponseDto } from './dto/pet-response.dto';
-import { CreatePetDto } from './dto/create-pet.dto';
-import { UpdatePetDto } from './dto/update-pet.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
-import { Pet } from './entities/pet.entity';
-import { Repository } from 'typeorm';
-import { BreedsService } from '../breeds/breeds.service';
-import { PersonsService } from '../persons/persons.service';
 
 @Injectable()
 export class PetsService {
@@ -26,8 +26,11 @@ export class PetsService {
     key: string,
     value: any,
     withRelations = false,
+    manager?: EntityManager,
   ): Promise<Pet | null> {
-    return await this.petRepository.findOne({
+    const repo = manager ? manager.getRepository(Pet) : this.petRepository;
+
+    return await repo.findOne({
       where: { [key]: value },
       relations: withRelations ? ['person', 'breed'] : [],
     });
@@ -53,8 +56,12 @@ export class PetsService {
     };
   }
 
-  async findEntityById(id: number, withRelations = false): Promise<Pet> {
-    const pet = await this.findBy('pets_id', id, withRelations);
+  async findEntityById(
+    id: number,
+    withRelations = false,
+    manager?: EntityManager,
+  ): Promise<Pet> {
+    const pet = await this.findBy('pets_id', id, withRelations, manager);
     return throwIfNotFound(pet, 'Mascota', id);
   }
 
