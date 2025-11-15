@@ -8,8 +8,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { plainToInstance } from 'class-transformer';
 import { createHash } from 'src/common/create-hash';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
 import {
   throwIfNoEffect,
   throwIfNotFound,
@@ -21,14 +21,20 @@ export class UsersService {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  async findBy(key: string, value: any): Promise<User | null> {
-    return await this.userRepository.findOne({
+  async findBy(
+    key: string,
+    value: any,
+    manager?: EntityManager,
+  ): Promise<User | null> {
+    const repo = manager ? manager.getRepository(User) : this.userRepository;
+
+    return await repo.findOne({
       where: { [key]: value },
     });
   }
 
-  async findEntityById(id: number): Promise<User> {
-    const pet = await this.findBy('users_id', id);
+  async findEntityById(id: number, manager?: EntityManager): Promise<User> {
+    const pet = await this.findBy('users_id', id, manager);
     return throwIfNotFound(pet, 'Usuario', id);
   }
 
