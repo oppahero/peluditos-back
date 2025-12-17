@@ -41,7 +41,7 @@ export class UsersService {
   async findByUsername(username: string): Promise<User | null> {
     return await this.userRepository.findOne({
       where: { username },
-      select: ['users_id', 'username', 'password'],
+      select: ['users_id', 'username', 'password', 'rol'],
     });
   }
 
