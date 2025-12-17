@@ -24,7 +24,7 @@ import { JwtStrategy } from './jwt.strategy';
       ): Promise<JwtModuleOptions> => ({
         secret: jwtConfig.secret,
         signOptions: {
-          expiresIn: jwtConfig.expiresIn ?? '1d',
+          expiresIn: jwtConfig.expiresIn ?? '15m',
         },
       }),
     }),

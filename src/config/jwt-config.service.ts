@@ -12,6 +12,16 @@ export class JwtConfigService {
   }
 
   get expiresIn(): any {
-    return this.configService.get<string>('JWT_EXPIRES_IN', '1d');
+    return this.configService.get<string>('JWT_EXPIRES_IN', '15m');
+  }
+
+  get refreshSecret(): string {
+    const value = this.configService.get<string>('JWT_REFRESH_SECRET');
+    if (!value) throw new Error('JWT_REFRESH_SECRET is missing');
+    return value;
+  }
+
+  get refreshExpiresIn(): any {
+    return this.configService.get<string>('JWT_REFRESH_EXPIRES_IN', '7d');
   }
 }
