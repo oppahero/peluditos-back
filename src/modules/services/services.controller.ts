@@ -1,14 +1,18 @@
 import { SuccessResponseDto } from 'src/common/dto/success-response.dto';
+import { PaginatedServicesDto } from './dto/paginated-services.dto';
 import { ServiceResponseDto } from './dto/service-response.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { ServicesService } from './services.service';
 import {
   ApiBody,
-  ApiOperation,
   ApiQuery,
-  ApiResponse,
   ApiTags,
+  ApiParam,
+  ApiResponse,
+  ApiOperation,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import {
   Get,
@@ -16,12 +20,15 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
-  Controller,
   Query,
+  Delete,
+  HttpCode,
+  Controller,
 } from '@nestjs/common';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { PaginatedServicesDto } from './dto/paginated-services.dto';
+import {
+  ApiErrorType,
+  buildApiErrorResponse,
+} from 'src/common/enums/api-error.types';
 
 @ApiTags('Services')
 @Controller('services')
@@ -67,20 +74,72 @@ export class ServicesController {
 
   /**
    *
-   * @returns {SuccessResponseDto<ServiceResponseDto>} Devuelve service creado
+   * @returns {SuccessResponseDto<ServiceResponseDto>} Devuelve servicio dado el Id
+   * @param {number} serviceId Id del servicio
+   */
+  @Get(':serviceId')
+  @ApiOperation({ summary: 'Obtener Servicio dado el id' })
+  @ApiParam({
+    name: 'serviceId',
+    type: Number,
+    required: true,
+    description: 'ID del servicio',
+    example: 10,
+  })
+  @ApiNotFoundResponse({
+    example: buildApiErrorResponse(
+      404,
+      '/api/v1/services/{serviceId}',
+      ApiErrorType.RESOURCE_NOT_FOUND,
+      'Servicio con ID 10 no encontrado',
+    ),
+  })
+  async findById(
+    @Param('serviceId') serviceId: number,
+  ): Promise<SuccessResponseDto<ServiceResponseDto>> {
+    const res = await this.servicesService.findById(serviceId);
+    return new SuccessResponseDto({ data: res });
+  }
+
+  /**
+   *
+   * @returns {SuccessResponseDto<ServiceResponseDto>}
    * @param {CreatePetDto} newService Servicio a crear
    */
   @Post()
+  @ApiOperation({ summary: 'Registra nuevo servicio' })
   @ApiBody({ type: CreateServiceDto })
   async create(
     @Body() newService: CreateServiceDto,
   ): Promise<SuccessResponseDto<ServiceResponseDto>> {
-    const res = await this.servicesService.create(newService);
-    return new SuccessResponseDto({ data: res });
+    await this.servicesService.create(newService);
+    return new SuccessResponseDto({
+      message: 'Se han registrado los servicios',
+    });
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
-    return this.servicesService.update(+id, updateServiceDto);
+  @Patch(':serviceId')
+  update(
+    @Param('serviceId') serviceId: number,
+    @Body() newService: UpdateServiceDto,
+  ) {
+    return this.servicesService.update(serviceId, newService);
+  }
+
+  /**
+   * @param {number} serviceId Id del servicio a eliminar
+   */
+  @Delete(':serviceId')
+  @HttpCode(204)
+  @ApiOperation({ summary: 'Eliminar servicio' })
+  @ApiParam({
+    name: 'serviceId',
+    type: Number,
+    required: true,
+    description: 'ID del servicio',
+    example: 10,
+  })
+  delete(@Param('serviceId') serviceId: number) {
+    return this.servicesService.delete(serviceId);
   }
 }

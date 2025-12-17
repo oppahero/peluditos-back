@@ -1,12 +1,13 @@
+import { CreateServiceDetailDto } from 'src/modules/service-details/dto/create-service-detail.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsInt,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsPositive,
+  IsArray,
   IsString,
   MaxLength,
+  IsNotEmpty,
+  IsOptional,
+  IsPositive,
 } from 'class-validator';
 
 export class CreateServiceDto {
@@ -28,8 +29,15 @@ export class CreateServiceDto {
   @ApiProperty({ example: 'Perrito ansioso', required: false })
   observation?: string;
 
-  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsArray()
   @IsNotEmpty()
-  @ApiProperty({ example: 60.5 })
-  total_amount: number;
+  @ApiProperty({
+    example: [
+      {
+        type_of_service_id: 2,
+        employee_id: 1,
+      },
+    ],
+  })
+  details: CreateServiceDetailDto[];
 }

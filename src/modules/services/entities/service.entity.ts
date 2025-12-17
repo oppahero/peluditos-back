@@ -1,12 +1,15 @@
+import { ServiceDetail } from 'src/modules/service-details/entities/service-detail.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import { Pet } from 'src/modules/pets/entities/pet.entity';
 import {
   Entity,
   Column,
   ManyToOne,
+  OneToMany,
   JoinColumn,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
+  PrimaryGeneratedColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 
 @Entity('services')
@@ -32,4 +35,13 @@ export class Service {
   @ManyToOne(() => User, (user) => user.users_id)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @OneToMany(() => ServiceDetail, (detail) => detail.service, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  details: ServiceDetail[];
+
+  @DeleteDateColumn()
+  deleted_at?: Date;
 }

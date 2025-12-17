@@ -6,6 +6,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PetsModule } from '../pets/pets.module';
 import { UsersModule } from '../users/users.module';
+import { ServiceDetailsModule } from '../service-details/service-details.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { UsersModule } from '../users/users.module';
     forwardRef(() => AuthModule),
     PetsModule,
     UsersModule,
+    ServiceDetailsModule,
   ],
   controllers: [ServicesController],
   providers: [ServicesService],
