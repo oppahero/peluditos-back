@@ -17,6 +17,7 @@ import { LegalEntitiesModule } from './modules/legal-entities/legal-entities.mod
 import { PetsModule } from './modules/pets/pets.module';
 import { ServicesModule } from './modules/services/services.module';
 import * as Joi from 'joi';
+import { ServiceDetailsModule } from './modules/service-details/service-details.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import * as Joi from 'joi';
     LegalEntitiesModule,
     PetsModule,
     ServicesModule,
+    ServiceDetailsModule,
     // TypeOrmModule.forRoot(configService.getTypeOrmConfig()),  con dotenv
   ],
   controllers: [AppController],
