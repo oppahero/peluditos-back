@@ -20,9 +20,10 @@ export class AuthController {
   @ApiBody({ type: LoginDto })
   @ApiResponse({
     status: 200,
-    description: 'Token de acceso generado correctamente',
     example: {
       access_token: 'lkaskanklsnalkññalkasjkjalks',
+      username: 'rlopez123',
+      rol: 'Veterinario',
     },
   })
   @UseGuards(LocalAuthGuard)
