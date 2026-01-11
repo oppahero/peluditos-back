@@ -46,9 +46,9 @@ export class AuthController {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: false, // true solo en HTTPS
-      sameSite: 'strict',
+      sameSite: 'lax', //strict none lax
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/auth/refresh',
+      path: '/api/v1/auth/refresh',
     });
 
     return res.json({ user: req.user, accessToken });
