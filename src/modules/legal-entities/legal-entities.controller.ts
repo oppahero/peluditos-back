@@ -141,7 +141,7 @@ export class LegalEntitiesController {
     status: 201,
     type: SuccessResponseDto<LegalEntityResponseDto>,
     example: {
-      message: 'Persona Natural creada exitosamente',
+      message: 'Persona Jurídica creada exitosamente',
       data: {
         person_id: 37,
         person: {
@@ -167,7 +167,10 @@ export class LegalEntitiesController {
     @Body() newLegalEntity: CreateLegalEntityDto,
   ): Promise<SuccessResponseDto<LegalEntityResponseDto>> {
     const res = await this.legalEntitiesService.create(newLegalEntity);
-    return new SuccessResponseDto({ data: res });
+    return new SuccessResponseDto({
+      data: res,
+      message: 'Persona Jurídica creada exitosamente',
+    });
   }
 
   /**
