@@ -16,13 +16,13 @@ export class CreatePersonDto {
   phone: string;
 
   @IsString()
-  @MaxLength(15)
+  @MaxLength(30)
   @IsNotEmpty()
   @ApiProperty({ example: 'paola@gmail.com' })
   email: string;
 
   @IsString()
-  @MaxLength(15)
+  @MaxLength(30)
   @ApiProperty({ example: 'Alta Vista' })
   address: string;
 

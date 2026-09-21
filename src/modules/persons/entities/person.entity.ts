@@ -21,14 +21,14 @@ export class Person {
   phone: string;
 
   @Column({
-    length: 15,
+    length: 30,
     unique: true,
   })
   @IsEmail({}, { message: 'El correo no tiene un formato válido' })
   email: string;
 
   @Column({
-    length: 15,
+    length: 30,
   })
   address: string;
 
